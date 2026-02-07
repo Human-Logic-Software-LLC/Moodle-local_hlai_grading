@@ -38,7 +38,7 @@ if ($courseid) {
     }
     $PAGE->set_url(new moodle_url('/local/hlai_grading/dashboard.php', $urlparams));
     $PAGE->set_context($context);
-    
+
     // Check capability for teacher view
     require_capability('mod/quiz:viewreports', $context); // Or mod/quiz:grade
     $viewtype = 'teacher';
@@ -71,7 +71,7 @@ echo $output->header();
 
 // We can add a specialized renderer method if we want, or just render the renderable directly
 // if the default renderer supports it (which it usually does via render_renderable).
-// But standard practice is to have a render method in the renderer. 
+// But standard practice is to have a render method in the renderer.
 // However, since we defined export_for_template in dashboard_page, we can use $output->render($page).
 
 echo $output->render($page);

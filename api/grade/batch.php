@@ -92,10 +92,7 @@ foreach ($userids as $targetuserid) {
             'hlai_grading_results',
             'modulename = :mod AND instanceid = :instance AND userid = :userid AND status <> :rejected',
             [
-                'mod' => 'assign',
-                'instance' => $assignment->id,
-                'userid' => $targetuserid,
-                'rejected' => 'rejected',
+                'mod' => 'assign', 'instance' => $assignment->id, 'userid' => $targetuserid, 'rejected' => 'rejected',
             ]
         );
         if ($exists) {
@@ -142,8 +139,7 @@ foreach ($userids as $targetuserid) {
         $queued++;
     } catch (\Throwable $e) {
         $errors[] = [
-            'userid' => $targetuserid,
-            'message' => $e->getMessage(),
+            'userid' => $targetuserid, 'message' => $e->getMessage(),
         ];
     }
 }
@@ -152,8 +148,6 @@ core\session\manager::write_close();
 
 header('Content-Type: application/json');
 echo json_encode([
-    'queued' => $queued,
-    'already_graded' => $already,
-    'errors' => $errors,
+    'queued' => $queued, 'already_graded' => $already, 'errors' => $errors,
 ]);
 exit;

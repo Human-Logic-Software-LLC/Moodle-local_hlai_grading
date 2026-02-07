@@ -116,11 +116,7 @@ class rubric_analyzer {
 
             $totalmax += $criterionmax;
             $criteria[$criterionid] = [
-                'id' => (int)$criterionid,
-                'name' => $readablename,
-                'maxscore' => $criterionmax,
-                'levels' => $levels,
-                'normalized' => $normalized,
+                'id' => (int)$criterionid, 'name' => $readablename, 'maxscore' => $criterionmax, 'levels' => $levels, 'normalized' => $normalized,
             ];
         }
 
@@ -159,25 +155,19 @@ class rubric_analyzer {
         }
 
         $export = [
-            'name' => $rubric['name'] ?? 'Assignment Rubric',
-            'max_score' => $rubric['maxscore'] ?? 0,
-            'criteria' => [],
+            'name' => $rubric['name'] ?? 'Assignment Rubric', 'max_score' => $rubric['maxscore'] ?? 0, 'criteria' => [],
         ];
 
         foreach ($rubric['criteria'] as $criterion) {
             $levels = [];
             foreach ($criterion['levels'] as $level) {
                 $levels[] = [
-                    'label' => $level['label'],
-                    'score' => $level['score'],
-                    'description' => $level['description'],
+                    'label' => $level['label'], 'score' => $level['score'], 'description' => $level['description'],
                 ];
             }
 
             $export['criteria'][] = [
-                'name' => $criterion['name'],
-                'max_score' => $criterion['maxscore'],
-                'levels' => $levels,
+                'name' => $criterion['name'], 'max_score' => $criterion['maxscore'], 'levels' => $levels,
             ];
         }
 
@@ -233,11 +223,7 @@ class rubric_analyzer {
             }
 
             $result['criteria'][] = [
-                'criterionid' => $criterion['id'],
-                'name' => $criterion['name'],
-                'score' => $score,
-                'max_score' => $maxscore,
-                'feedback' => $feedback,
+                'criterionid' => $criterion['id'], 'name' => $criterion['name'], 'score' => $score, 'max_score' => $maxscore, 'feedback' => $feedback,
             ];
 
             $result['calculated_score'] += $score;

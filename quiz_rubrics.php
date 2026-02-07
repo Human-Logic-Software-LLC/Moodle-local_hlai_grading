@@ -80,9 +80,7 @@ if ($action === 'delete' && $existing) {
 }
 
 $formdata = (object)[
-    'name' => '',
-    'visibility' => 'course',
-    'items' => '',
+    'name' => '', 'visibility' => 'course', 'items' => '',
 ];
 
 $submitted = ($action === 'save' && data_submitted());
@@ -134,7 +132,7 @@ if (!$submitted && $existing) {
 $rubrics = local_hlai_grading_get_quiz_rubrics($courseid, $context);
 $itemcounts = [];
 if (!empty($rubrics)) {
-    list($insql, $params) = $DB->get_in_or_equal(array_keys($rubrics), SQL_PARAMS_NAMED);
+    [$insql, $params] = $DB->get_in_or_equal(array_keys($rubrics), SQL_PARAMS_NAMED);
     $countrecords = $DB->get_records_sql(
         "SELECT rubricid, COUNT(1) AS itemcount
            FROM {hlai_quiz_rubric_item}
@@ -170,8 +168,7 @@ echo html_writer::tag('h2', get_string('quizrubric_manage', 'local_hlai_grading'
 echo html_writer::tag('p', get_string('quizrubric_manage_intro', 'local_hlai_grading'), ['class' => 'hlai-page-subtitle']);
 echo html_writer::end_div();
 $backurl = new moodle_url('/local/hlai_grading/view.php', [
-    'courseid' => $courseid ?: SITEID,
-    'module' => 'quiz',
+    'courseid' => $courseid ?: SITEID, 'module' => 'quiz',
 ]);
 echo html_writer::start_div('hlai-page-actions');
 echo html_writer::tag(
@@ -179,8 +176,7 @@ echo html_writer::tag(
     html_writer::tag('i', '', ['class' => 'fa fa-arrow-left', 'aria-hidden' => 'true']) . ' ' .
         get_string('returntoreviewbutton', 'local_hlai_grading'),
     [
-        'href' => $backurl->out(false),
-        'class' => 'button is-light',
+        'href' => $backurl->out(false), 'class' => 'button is-light',
     ]
 );
 echo html_writer::end_div();
@@ -192,11 +188,7 @@ foreach ($errors as $error) {
 
 if ($confirmdelete && $existing) {
     $confirmurl = new moodle_url('/local/hlai_grading/quiz_rubrics.php', [
-        'courseid' => $courseid,
-        'action' => 'delete',
-        'id' => $existing->id,
-        'confirm' => 1,
-        'sesskey' => sesskey(),
+        'courseid' => $courseid, 'action' => 'delete', 'id' => $existing->id, 'confirm' => 1, 'sesskey' => sesskey(),
     ]);
     $cancelurl = new moodle_url('/local/hlai_grading/quiz_rubrics.php', ['courseid' => $courseid]);
 
@@ -314,23 +306,18 @@ if (empty($rubrics)) {
         echo html_writer::start_tag('tr');
         echo html_writer::tag('td', $namecell);
         echo html_writer::tag('td', html_writer::tag('span', $visibilitylabel, [
-            'class' => 'iksha-badge ' . $visibilityclass . ' iksha-badge--sm'
+            'class' => 'iksha-badge ' . $visibilityclass . ' iksha-badge--sm',
         ]));
         echo html_writer::tag('td', html_writer::tag('span', (string)$itemcount, [
-            'class' => 'iksha-badge iksha-badge--neutral iksha-badge--sm'
+            'class' => 'iksha-badge iksha-badge--neutral iksha-badge--sm',
         ]));
 
         if ($canedit) {
             $editurl = new moodle_url('/local/hlai_grading/quiz_rubrics.php', [
-                'courseid' => $courseid,
-                'action' => 'edit',
-                'id' => $rubric->id,
+                'courseid' => $courseid, 'action' => 'edit', 'id' => $rubric->id,
             ]);
             $deleteurl = new moodle_url('/local/hlai_grading/quiz_rubrics.php', [
-                'courseid' => $courseid,
-                'action' => 'delete',
-                'id' => $rubric->id,
-                'sesskey' => sesskey(),
+                'courseid' => $courseid, 'action' => 'delete', 'id' => $rubric->id, 'sesskey' => sesskey(),
             ]);
             $actions = html_writer::start_div('iksha-actions');
             $actions .= html_writer::link($editurl, get_string('edit'), ['class' => 'button is-light is-small']);
@@ -369,10 +356,7 @@ echo html_writer::end_tag('header');
 echo html_writer::start_div('iksha-widget__body');
 
 echo html_writer::start_tag('form', [
-    'method' => 'post',
-    'action' => $pageurl->out(false),
-    'class' => 'iksha-form',
-    'id' => 'rubric-form',
+    'method' => 'post', 'action' => $pageurl->out(false), 'class' => 'iksha-form', 'id' => 'rubric-form',
 ]);
 echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => 'save']);
 echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
@@ -384,11 +368,7 @@ echo html_writer::start_div('field');
 echo html_writer::tag('label', get_string('quizrubric_name', 'local_hlai_grading'), ['class' => 'label']);
 echo html_writer::start_div('control');
 echo html_writer::empty_tag('input', [
-    'type' => 'text',
-    'name' => 'name',
-    'value' => s($formdata->name),
-    'class' => 'input',
-    'required' => 'required',
+    'type' => 'text', 'name' => 'name', 'value' => s($formdata->name), 'class' => 'input', 'required' => 'required',
 ]);
 echo html_writer::end_div();
 echo html_writer::end_div();
@@ -400,8 +380,7 @@ if ($courseid) {
     echo html_writer::start_div('select is-fullwidth');
     echo html_writer::start_tag('select', ['name' => 'visibility']);
     $visibilities = [
-        'course' => get_string('quizrubric_visibility_course', 'local_hlai_grading'),
-        'global' => get_string('quizrubric_visibility_global', 'local_hlai_grading'),
+        'course' => get_string('quizrubric_visibility_course', 'local_hlai_grading'), 'global' => get_string('quizrubric_visibility_global', 'local_hlai_grading'),
     ];
     foreach ($visibilities as $value => $label) {
         $selected = ($formdata->visibility === $value) ? ['selected' => 'selected'] : [];
@@ -420,10 +399,7 @@ echo html_writer::start_div('field');
 echo html_writer::tag('label', get_string('quizrubric_items', 'local_hlai_grading'), ['class' => 'label']);
 echo html_writer::start_div('control');
 echo html_writer::tag('textarea', s($formdata->items), [
-    'name' => 'items',
-    'rows' => 8,
-    'class' => 'textarea',
-    'placeholder' => get_string('quizrubric_items_example', 'local_hlai_grading'),
+    'name' => 'items', 'rows' => 8, 'class' => 'textarea', 'placeholder' => get_string('quizrubric_items_example', 'local_hlai_grading'),
 ]);
 echo html_writer::end_div();
 echo html_writer::tag('p', get_string('quizrubric_items_help', 'local_hlai_grading'), ['class' => 'iksha-help']);
@@ -432,8 +408,7 @@ echo html_writer::end_div();
 
 echo html_writer::start_div('iksha-form-actions');
 echo html_writer::tag('button', get_string('quizrubric_save', 'local_hlai_grading'), [
-    'type' => 'submit',
-    'class' => 'button is-primary',
+    'type' => 'submit', 'class' => 'button is-primary',
 ]);
 if ($existing) {
     $cancelurl = new moodle_url('/local/hlai_grading/quiz_rubrics.php', ['courseid' => $courseid]);

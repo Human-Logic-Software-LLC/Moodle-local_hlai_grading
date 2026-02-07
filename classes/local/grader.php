@@ -32,7 +32,6 @@ use moodle_exception;
  * Grader class.
  */
 class grader {
-
     /**
      * Grade a piece of text via gateway.
      *
@@ -43,10 +42,12 @@ class grader {
      * @return array The result array.
      * @throws moodle_exception
      */
-    public function grade_text(string $question,
-                               string $studenttext,
-                               ?string $rubricjson = null,
-                               string $quality = 'balanced'): array {
+    public function grade_text(
+        string $question,
+        string $studenttext,
+        ?string $rubricjson = null,
+        string $quality = 'balanced'
+    ): array {
 
         if (!gateway_client::is_ready()) {
             throw new moodle_exception('aiclientnotready', 'local_hlai_grading');
@@ -68,8 +69,13 @@ class grader {
             $data = null;
         }
         if (empty($data)) {
-            throw new moodle_exception('invalidaigrade', 'local_hlai_grading',
-                '', null, 'Gateway returned empty/invalid JSON');
+            throw new moodle_exception(
+                'invalidaigrade',
+                'local_hlai_grading',
+                '',
+                null,
+                'Gateway returned empty/invalid JSON'
+            );
         }
 
         return $data;

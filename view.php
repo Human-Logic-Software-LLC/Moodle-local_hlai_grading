@@ -122,8 +122,7 @@ if ($action === 'releaseall') {
 
     if ($failed > 0) {
         $msg = get_string('releaseallpartial', 'local_hlai_grading', (object)[
-            'released' => $released,
-            'failed' => $failed,
+            'released' => $released, 'failed' => $failed,
         ]);
         if (!empty($errors)) {
             $msg .= ' ' . get_string('releaseallerror', 'local_hlai_grading', implode(' | ', $errors));
@@ -149,8 +148,7 @@ echo html_writer::end_div();
 
 // Module filter tabs (assign vs quiz).
 $modulelabels = [
-    'assign' => get_string('pluginname', 'assign'),
-    'quiz' => get_string('pluginname', 'quiz'),
+    'assign' => get_string('pluginname', 'assign'), 'quiz' => get_string('pluginname', 'quiz'),
 ];
 echo html_writer::start_div('tabs');
 echo html_writer::start_tag('ul');
@@ -294,15 +292,12 @@ if (!$pending) {
     if ($cangrade) {
         $releaseallurl = new moodle_url('/local/hlai_grading/view.php', $urlparams);
         echo html_writer::start_tag('form', [
-            'method' => 'post',
-            'action' => $releaseallurl->out(false),
-            'class' => 'mb-3',
+            'method' => 'post', 'action' => $releaseallurl->out(false), 'class' => 'mb-3',
         ]);
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => 'releaseall']);
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
         echo html_writer::tag('button', get_string('reviewreleasebutton', 'local_hlai_grading', count($pending)), [
-            'type' => 'submit',
-            'class' => 'button is-primary is-small',
+            'type' => 'submit', 'class' => 'button is-primary is-small',
         ]);
         echo html_writer::end_tag('form');
     }
@@ -343,7 +338,7 @@ if (!$pending) {
         echo html_writer::tag('td', s($sourcelabel));
         echo html_writer::tag('td', html_writer::tag('span', $graded, ['class' => 'iksha-table__meta']));
         echo html_writer::tag('td', html_writer::tag('span', get_string('badgedraft', 'local_hlai_grading'), [
-            'class' => 'iksha-badge iksha-badge--warning iksha-badge--sm'
+            'class' => 'iksha-badge iksha-badge--warning iksha-badge--sm',
         ]));
 
         if ($cangrade) {
@@ -419,16 +414,11 @@ if ($rejected) {
         if ($cangrade) {
             if ($result->modulename === 'assign') {
                 $manualurl = new moodle_url('/mod/assign/view.php', [
-                    'id' => $result->cmid,
-                    'action' => 'grade',
-                    'userid' => $result->userid,
-                    'hlai_return' => $returnpath,
+                    'id' => $result->cmid, 'action' => 'grade', 'userid' => $result->userid, 'hlai_return' => $returnpath,
                 ]);
             } else if ($result->modulename === 'quiz') {
                 $manualparams = [
-                    'id' => $result->cmid,
-                    'mode' => 'grading',
-                    'hlai_return' => $returnpath,
+                    'id' => $result->cmid, 'mode' => 'grading', 'hlai_return' => $returnpath,
                 ];
                 if (!empty($result->slot)) {
                     $manualparams['slot'] = (int)$result->slot;
@@ -446,7 +436,7 @@ if ($rejected) {
         echo html_writer::tag('td', s($sourcelabel));
         echo html_writer::tag('td', html_writer::tag('span', $rejectedon, ['class' => 'iksha-table__meta']));
         echo html_writer::tag('td', html_writer::tag('span', get_string('badgerejected', 'local_hlai_grading'), [
-            'class' => 'iksha-badge iksha-badge--neutral iksha-badge--sm'
+            'class' => 'iksha-badge iksha-badge--neutral iksha-badge--sm',
         ]));
 
         if ($cangrade) {

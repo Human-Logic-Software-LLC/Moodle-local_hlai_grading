@@ -22,14 +22,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('CLI_SCRIPT')) {
-    define('CLI_SCRIPT', true);
-}
-require('C:\\xampp81\\htdocs\\moodle41\\config.php');
+define('CLI_SCRIPT', true);
+
+require(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/local/hlai_grading/classes/local/similarity.php');
 
+/**
+ * Normalize text by stripping HTML tags, decoding entities, and collapsing whitespace.
+ *
+ * @param string $text The raw text to normalize.
+ * @return string The cleaned plain-text string.
+ */
 function normalize_text_local(string $text): string {
     $plain = trim(strip_tags($text));
     if ($plain === '') {
@@ -176,10 +181,7 @@ foreach ($grouped as $attemptid => $attemptresults) {
                 $payload['analysis'] = $analysis;
             } else {
                 $payload = [
-                    'request' => $payload,
-                    'analysis' => $analysis,
-                    'resultid' => $result->id,
-                    'provider' => $analysis['method'] ?? 'semantic',
+                    'request' => $payload, 'analysis' => $analysis, 'resultid' => $result->id, 'provider' => $analysis['method'] ?? 'semantic',
                 ];
             }
             $queue->payload = json_encode($payload);

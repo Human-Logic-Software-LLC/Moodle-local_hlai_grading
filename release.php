@@ -36,11 +36,7 @@ $result = $DB->get_record('hlai_grading_results', ['id' => $id], '*', MUST_EXIST
 $queue  = $DB->get_record('hlai_grading_queue', ['id' => $result->queueid], '*', IGNORE_MISSING);
 if (!$queue) {
     $queue = (object)[
-        'id' => $result->queueid,
-        'submissionid' => $result->submissionid ?? 0,
-        'attemptid' => $result->attemptid ?? 0,
-        'questionid' => $result->questionid ?? 0,
-        'payload' => null,
+        'id' => $result->queueid, 'submissionid' => $result->submissionid ?? 0, 'attemptid' => $result->attemptid ?? 0, 'questionid' => $result->questionid ?? 0, 'payload' => null,
     ];
 }
 
@@ -79,9 +75,7 @@ $PAGE->set_title(get_string('releasegradedraft', 'local_hlai_grading'));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->requires->css('/local/hlai_grading/styles.css');
 $dashboardurl = new moodle_url('/local/hlai_grading/view.php', [
-    'courseid' => $course->id,
-    'assignid' => $activity->id,
-    'module' => $modulename
+    'courseid' => $course->id, 'assignid' => $activity->id, 'module' => $modulename,
 ]);
 
 // Handle release confirmation
@@ -353,30 +347,24 @@ echo html_writer::start_div('ai-grading-actions');
 
 // Release button
 $releaseurl = new moodle_url('/local/hlai_grading/release.php', [
-    'id' => $id,
-    'action' => 'release',
-    'confirm' => 1,
-    'sesskey' => sesskey()
+    'id' => $id, 'action' => 'release', 'confirm' => 1, 'sesskey' => sesskey(),
 ]);
 echo html_writer::link($releaseurl, get_string('releasegrade', 'local_hlai_grading'), [
-    'class' => 'btn btn-success mr-2'
+    'class' => 'btn btn-success mr-2',
 ]);
 
 // Reject button
 $rejecturl = new moodle_url('/local/hlai_grading/release.php', [
-    'id' => $id,
-    'action' => 'reject',
-    'confirm' => 1,
-    'sesskey' => sesskey()
+    'id' => $id, 'action' => 'reject', 'confirm' => 1, 'sesskey' => sesskey(),
 ]);
 echo html_writer::link($rejecturl, get_string('rejectgrade', 'local_hlai_grading'), [
-    'class' => 'btn btn-warning mr-2'
+    'class' => 'btn btn-warning mr-2',
 ]);
 
 // Cancel button
 $cancelurl = $dashboardurl ?? new moodle_url('/local/hlai_grading/view.php', ['courseid' => $course->id]);
 echo html_writer::link($cancelurl, get_string('cancel'), [
-    'class' => 'btn btn-secondary'
+    'class' => 'btn btn-secondary',
 ]);
 
 echo html_writer::end_div();

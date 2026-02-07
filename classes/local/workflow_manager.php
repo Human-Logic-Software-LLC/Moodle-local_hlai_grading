@@ -30,7 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * Workflow_manager class.
  */
 class workflow_manager {
-
     /**
      * Move a user's assignment submission into a workflow state.
      *

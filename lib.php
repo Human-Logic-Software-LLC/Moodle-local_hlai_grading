@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function local_hlai_grading_extend_navigation(global_navigation $navigation) {
     global $PAGE;
-    
+
     $context = $PAGE->context ?? context_system::instance();
     if (!has_capability('local/hlai_grading:viewresults', $context)) {
         return;
@@ -41,7 +41,7 @@ function local_hlai_grading_extend_navigation(global_navigation $navigation) {
     if (!$courseid) {
         return;
     }
-    
+
     // Link to the new metrics dashboard
     $urlparams = ['courseid' => $courseid];
 
@@ -64,7 +64,7 @@ function local_hlai_grading_extend_navigation(global_navigation $navigation) {
  */
 function local_hlai_grading_extend_settings_navigation(settings_navigation $settingsnav, context $context) {
     global $PAGE;
-    
+
     // Add to site administration
     if ($context->contextlevel == CONTEXT_SYSTEM) {
         // Try common node names (theme-dependent)
@@ -72,7 +72,7 @@ function local_hlai_grading_extend_settings_navigation(settings_navigation $sett
         if (!$systemnode) {
             $systemnode = $settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
         }
-        
+
         if ($systemnode && has_capability('local/hlai_grading:configure', $context)) {
             $node = navigation_node::create(
                 get_string('navdashboard', 'local_hlai_grading'),
@@ -85,7 +85,7 @@ function local_hlai_grading_extend_settings_navigation(settings_navigation $sett
             $systemnode->add_node($node);
         }
     }
-    
+
     // Add to course administration when in assignment
     if ($PAGE->cm && in_array($PAGE->cm->modname, ['assign', 'quiz'], true)) {
         $coursenode = $settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
@@ -95,7 +95,7 @@ function local_hlai_grading_extend_settings_navigation(settings_navigation $sett
                 new moodle_url('/local/hlai_grading/view.php', [
                     'courseid' => $PAGE->course->id,
                     'assignid' => $PAGE->cm->instance,
-                    'module' => $PAGE->cm->modname
+                    'module' => $PAGE->cm->modname,
                 ]),
                 navigation_node::TYPE_CUSTOM,
                 null,
@@ -205,8 +205,10 @@ function local_hlai_grading_before_http_headers() {
         }
     }
 
-    if (!empty($PAGE->cm) && $PAGE->cm->modname === 'quiz' && $PAGE->url &&
-        strpos($PAGE->url->get_path(), '/mod/quiz/review.php') !== false) {
+    if (
+        !empty($PAGE->cm) && $PAGE->cm->modname === 'quiz' && $PAGE->url &&
+        strpos($PAGE->url->get_path(), '/mod/quiz/review.php') !== false
+    ) {
         $PAGE->requires->css('/local/hlai_grading/styles.css');
     }
 }
@@ -311,7 +313,6 @@ function local_hlai_grading_coursemodule_standard_elements($formwrapper, $mform)
     if ($modulename === 'quiz') {
         $mform->setDefault('hlai_rubricid', $defaults->rubricid ?? 0);
     }
-
 }
 
 /**
@@ -396,7 +397,7 @@ function local_hlai_grading_assign_grading_table($data) {
  */
 function local_hlai_grading_assign_grading_summary($assignid) {
     global $PAGE;
-    
+
     $renderer = $PAGE->get_renderer('local_hlai_grading');
     return $renderer->render_ai_summary_banner($assignid);
 }
@@ -412,12 +413,13 @@ function local_hlai_grading_before_footer() {
     $output = '';
 
     // Only inject on assignment grading pages when the user can manage grades.
-    if (($PAGE->pagetype === 'mod-assign-view' ||
+    if (
+        ($PAGE->pagetype === 'mod-assign-view' ||
         $PAGE->pagetype === 'mod-assign-grading' ||
         strpos($PAGE->url->get_path(), '/mod/assign/') !== false) &&
         $PAGE->cm &&
-        has_capability('mod/assign:grade', $PAGE->context)) {
-        
+        has_capability('mod/assign:grade', $PAGE->context)
+    ) {
         $PAGE->requires->js_call_amd('local_hlai_grading/ai_grading_integration', 'init');
     }
 
@@ -442,8 +444,10 @@ function local_hlai_grading_before_footer() {
         }
     }
 
-    if ($PAGE->cm && $PAGE->cm->modname === 'quiz' && $PAGE->url &&
-        strpos($PAGE->url->get_path(), '/mod/quiz/review.php') !== false) {
+    if (
+        $PAGE->cm && $PAGE->cm->modname === 'quiz' && $PAGE->url &&
+        strpos($PAGE->url->get_path(), '/mod/quiz/review.php') !== false
+    ) {
         $attemptid = optional_param('attempt', 0, PARAM_INT);
         if (!$attemptid) {
             $attemptid = optional_param('attemptid', 0, PARAM_INT);
@@ -487,7 +491,7 @@ function local_hlai_grading_before_standard_top_of_body_html() {
         $output .= \html_writer::start_div('alert alert-warning mb-3 ai-grading-return-banner');
         $output .= \html_writer::tag('strong', get_string('returntoreview', 'local_hlai_grading'));
         $output .= \html_writer::link($backurl, get_string('returntoreviewbutton', 'local_hlai_grading'), [
-            'class' => 'btn btn-secondary btn-sm ml-2'
+            'class' => 'btn btn-secondary btn-sm ml-2',
         ]);
         $output .= \html_writer::end_div();
     }
@@ -529,7 +533,7 @@ function local_hlai_grading_before_standard_top_of_body_html() {
     $pending = $DB->count_records('hlai_grading_results', [
         'instanceid' => $instanceid,
         'modulename' => $modulename,
-        'status' => 'draft'
+        'status' => 'draft',
     ]);
     if ($pending == 0) {
         return $output;
@@ -544,7 +548,7 @@ function local_hlai_grading_before_standard_top_of_body_html() {
 
     $html .= \html_writer::start_div('ai-grading-banner__content');
     $html .= \html_writer::tag('h5', get_string('bannerheading', 'local_hlai_grading'), [
-        'class' => 'ai-grading-banner__title'
+        'class' => 'ai-grading-banner__title',
     ]);
     $pendingtext = get_string(
         $pending == 1 ? 'bannerpendingone' : 'bannerpending',
@@ -557,7 +561,7 @@ function local_hlai_grading_before_standard_top_of_body_html() {
     $url = new moodle_url('/local/hlai_grading/view.php', [
         'courseid' => $courseid,
         'assignid' => $instanceid,
-        'module' => $modulename
+        'module' => $modulename,
     ]);
     $action = \html_writer::link(
         $url,
@@ -565,12 +569,17 @@ function local_hlai_grading_before_standard_top_of_body_html() {
         ['class' => 'btn btn-primary']
     );
     $html .= \html_writer::div($action, 'ai-grading-banner__actions');
-    
+
     $html .= \html_writer::end_div();
     $html .= \html_writer::end_div();
 
-    $html .= \html_writer::tag('script',
-        "document.addEventListener('DOMContentLoaded',function (){var banner=document.getElementById('ai-grading-banner');var page=document.getElementById('page');if(banner&&page&&!page.contains(banner)){page.insertBefore(banner,page.firstChild);}});",
+    $html .= \html_writer::tag(
+        'script',
+        "document.addEventListener('DOMContentLoaded',function (){" .
+            "var banner=document.getElementById('ai-grading-banner');" .
+            "var page=document.getElementById('page');" .
+            "if(banner&&page&&!page.contains(banner)){" .
+            "page.insertBefore(banner,page.firstChild);}});",
         ['type' => 'text/javascript']
     );
 
@@ -614,7 +623,15 @@ function local_hlai_grading_get_activity_settings(string $modulename, int $insta
 /**
  * Persist activity-level AI settings.
  */
-function local_hlai_grading_save_activity_settings(string $modulename, int $instanceid, int $enabled, string $quality, string $instructions, int $autorelease, ?int $rubricid = null): void {
+function local_hlai_grading_save_activity_settings(
+    string $modulename,
+    int $instanceid,
+    int $enabled,
+    string $quality,
+    string $instructions,
+    int $autorelease,
+    ?int $rubricid = null
+): void {
     global $DB;
 
     if ($instanceid <= 0 || empty($modulename)) {

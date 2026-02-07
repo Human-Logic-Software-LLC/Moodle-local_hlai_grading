@@ -30,7 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * Rate_limiter class.
  */
 class rate_limiter {
-
     /**
      * Ensure an action has not exceeded the configured threshold.
      *
@@ -48,9 +47,7 @@ class rate_limiter {
 
         $since = time() - $windowseconds;
         $params = [
-            'userid' => $userid,
-            'action' => $action,
-            'since' => $since,
+            'userid' => $userid, 'action' => $action, 'since' => $since,
         ];
         $count = $DB->count_records_select(
             'hlai_grading_log',

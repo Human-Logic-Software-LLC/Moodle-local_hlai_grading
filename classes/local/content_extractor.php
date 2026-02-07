@@ -93,8 +93,7 @@ class content_extractor {
         }
 
         return [
-            'text' => $combined,
-            'files' => $filelabels,
+            'text' => $combined, 'files' => $filelabels,
         ];
     }
 
@@ -107,8 +106,7 @@ class content_extractor {
     public static function extract_file(\stored_file $file): array {
         $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
         $result = [
-            'text' => '',
-            'format' => $extension ?: 'unknown',
+            'text' => '', 'format' => $extension ?: 'unknown',
         ];
 
         try {
@@ -139,6 +137,12 @@ class content_extractor {
         return $result;
     }
 
+    /**
+     * Extract text content from a plain text file.
+     *
+     * @param \stored_file $file The stored file to extract text from.
+     * @return string The cleaned text content.
+     */
     protected static function extract_txt(\stored_file $file): string {
         $content = $file->get_content();
         if ($content === false) {
@@ -147,6 +151,12 @@ class content_extractor {
         return self::clean_text($content);
     }
 
+    /**
+     * Extract text content from a PDF file using stream parsing.
+     *
+     * @param \stored_file $file The stored PDF file to extract text from.
+     * @return string The cleaned extracted text.
+     */
     protected static function extract_pdf(\stored_file $file): string {
         $binary = $file->get_content();
         if ($binary === false || $binary === '') {
@@ -173,6 +183,13 @@ class content_extractor {
         return self::clean_text($text);
     }
 
+    /**
+     * Extract text content from a document file using PhpWord.
+     *
+     * @param \stored_file $file The stored file to extract text from.
+     * @param string $extension The file extension (e.g. doc, docx, odt, rtf).
+     * @return string The cleaned extracted text.
+     */
     protected static function extract_with_phpword(\stored_file $file, string $extension): string {
         if (!self::ensure_phpword_loaded()) {
             if ($extension === 'doc') {
@@ -211,6 +228,13 @@ class content_extractor {
         return self::clean_text(strip_tags($html));
     }
 
+    /**
+     * Extract text from a legacy .doc file using Antiword or heuristic fallback.
+     *
+     * @param \stored_file $file The stored .doc file to extract text from.
+     * @param bool $throwonfailure Whether to throw an exception if extraction fails.
+     * @return string The cleaned extracted text.
+     */
     protected static function extract_doc_legacy(\stored_file $file, bool $throwonfailure = true): string {
         $antiword = self::get_antiword_path();
         if ($antiword) {
@@ -236,6 +260,12 @@ class content_extractor {
         return $text;
     }
 
+    /**
+     * Decode a raw PDF stream using gzip decompression.
+     *
+     * @param string $stream The raw PDF stream data.
+     * @return string The decoded stream content.
+     */
     protected static function decode_pdf_stream(string $stream): string {
         $stream = ltrim($stream);
         $decoded = @gzuncompress($stream);
@@ -245,6 +275,12 @@ class content_extractor {
         return ($decoded === false) ? $stream : $decoded;
     }
 
+    /**
+     * Extract readable text from a decoded PDF content stream.
+     *
+     * @param string $stream The decoded PDF stream content.
+     * @return string The extracted text.
+     */
     protected static function extract_text_from_pdf_stream(string $stream): string {
         $text = '';
         if (preg_match_all('/\((.*?)\)\s*Tj/s', $stream, $matches)) {
@@ -270,10 +306,23 @@ class content_extractor {
         return $text;
     }
 
+    /**
+     * Unescape special characters in PDF text strings.
+     *
+     * @param string $text The escaped PDF text.
+     * @return string The unescaped text.
+     */
     protected static function unescape_pdf_text(string $text): string {
         return preg_replace('/\\\\([nrtbf\\\\()])/', '$1', $text);
     }
 
+    /**
+     * Copy a stored file to a temporary location on disk.
+     *
+     * @param \stored_file $file The stored file to copy.
+     * @param string $suffix The file extension suffix (e.g. '.doc').
+     * @return string The path to the temporary file.
+     */
     protected static function copy_to_temp(\stored_file $file, string $suffix): string {
         $tempdir = make_temp_directory('local_hlai_grading');
         $tempfile = tempnam($tempdir, 'hlg');
@@ -283,6 +332,12 @@ class content_extractor {
         return $destination;
     }
 
+    /**
+     * Clean and normalise extracted text content.
+     *
+     * @param string $text The raw text to clean.
+     * @return string The cleaned and trimmed text.
+     */
     protected static function clean_text(string $text): string {
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $text = preg_replace("/\r\n|\r|\n/", "\n", $text);

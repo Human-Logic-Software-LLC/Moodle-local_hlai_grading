@@ -68,7 +68,7 @@ if (empty($submissions)) {
 } else {
     echo html_writer::start_div('iksha-table-wrapper');
     echo html_writer::start_tag('table', ['class' => 'iksha-table generaltable']);
-    
+
     // Header
     echo html_writer::start_tag('thead');
     echo html_writer::start_tag('tr');
@@ -80,21 +80,21 @@ if (empty($submissions)) {
     echo html_writer::tag('th', 'Actions');
     echo html_writer::end_tag('tr');
     echo html_writer::end_tag('thead');
-    
+
     // Body
     echo html_writer::start_tag('tbody');
-    
+
     foreach ($submissions as $userid => $participant) {
         $submission = $assign->get_user_submission($userid, false);
         $grade = $assign->get_user_grade($userid, false);
-        
+
         $user = $DB->get_record('user', ['id' => $userid]);
-        
+
         echo html_writer::start_tag('tr');
-        
+
         // Student name
         echo html_writer::tag('td', fullname($user));
-        
+
         // Submission status
         $status = 'Not submitted';
         if ($submission) {
@@ -104,41 +104,39 @@ if (empty($submissions)) {
 
         $aistatus = $renderer->render_ai_status_badge($userid, $assign->get_instance()->id);
         echo html_writer::tag('td', $aistatus);
-        
+
         // Current grade
         $gradetext = '-';
         if ($grade && $grade->grade >= 0) {
             $gradetext = sprintf('%.2f / %.2f', $grade->grade, $assign->get_instance()->grade);
         }
         echo html_writer::tag('td', $gradetext);
-        
+
         // Last modified
         $modified = '-';
         if ($submission && $submission->timemodified) {
             $modified = userdate($submission->timemodified);
         }
         echo html_writer::tag('td', $modified);
-        
+
         // Actions
         $gradeurl = new moodle_url('/mod/assign/view.php', [
-            'id' => $cmid,
-            'action' => 'grader',
-            'userid' => $userid
+            'id' => $cmid, 'action' => 'grader', 'userid' => $userid,
         ]);
         $gradelink = html_writer::link($gradeurl, 'Grade', ['class' => 'button is-light is-small']);
         echo html_writer::tag('td', $gradelink);
-        
+
         echo html_writer::end_tag('tr');
     }
-    
+
     echo html_writer::end_tag('tbody');
     echo html_writer::end_tag('table');
     echo html_writer::end_div();
-    
+
     // Bulk actions
     echo html_writer::start_div('mt-3');
     echo html_writer::tag('h4', 'Bulk Actions');
-    
+
     // Check if there are ungraded submissions
     $ungraded = 0;
     foreach ($submissions as $userid => $participant) {
@@ -147,12 +145,12 @@ if (empty($submissions)) {
             $ungraded++;
         }
     }
-    
+
     if ($ungraded > 0) {
         echo html_writer::tag('p', sprintf('%d submissions not yet graded', $ungraded));
         // Could add "Grade all with AI" button here if needed
     }
-    
+
     echo html_writer::end_div();
 }
 

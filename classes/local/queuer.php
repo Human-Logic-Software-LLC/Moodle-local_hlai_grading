@@ -32,7 +32,6 @@ use local_hlai_grading\local\workflow_manager;
  * Queuer class.
  */
 class queuer {
-
     /**
      * Put a submission into the hlai_grading_queue table.
      *

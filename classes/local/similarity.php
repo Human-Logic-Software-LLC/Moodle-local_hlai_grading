@@ -30,8 +30,11 @@ defined('MOODLE_INTERNAL') || die();
  * Similarity class.
  */
 class similarity {
+    /** Coverage weight for similarity scoring. */
     private const COVERAGE_WEIGHT = 0.7;
+    /** Jaccard weight for similarity scoring. */
     private const JACCARD_WEIGHT = 0.3;
+    /** Minimum token length to include in analysis. */
     private const MIN_TOKEN_LENGTH = 3;
 
     /**
@@ -293,5 +296,4 @@ class similarity {
         }
         return $output;
     }
-
 }

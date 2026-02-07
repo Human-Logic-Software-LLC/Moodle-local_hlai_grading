@@ -62,8 +62,8 @@ class process_queue extends scheduled_task {
 
         // SPEC: Fetch pending items that are ready to run (respect nextrun for retries)
         $now = time();
-        $sql = "SELECT * FROM {hlai_grading_queue} 
-                WHERE status = :status 
+        $sql = "SELECT * FROM {hlai_grading_queue}
+                WHERE status = :status
                 AND (nextrun IS NULL OR nextrun <= :now)
                 ORDER BY timecreated ASC";
         $items = $DB->get_records_sql($sql, ['status' => 'pending', 'now' => $now], 0, 20);
@@ -374,7 +374,6 @@ class process_queue extends scheduled_task {
                     0,
                     'Key-match grading completed and stored as draft'
                 );
-
             } catch (\Throwable $e) {
                 // SPEC: Retry logic with exponential backoff
                 $item->retries = ($item->retries ?? 0) + 1;
@@ -445,13 +444,13 @@ class process_queue extends scheduled_task {
         } else if (is_object($response) && property_exists($response, 'content')) {
             // AI Hub returns: {"content": "...", "provider": "...", ...}
             $content = $response->content;
-            
+
             // The content might have JSON wrapped in markdown code blocks
             // Remove ```json and ``` if present
             $content = preg_replace('/^```json\s*/m', '', $content);
             $content = preg_replace('/\s*```$/m', '', $content);
             $content = trim($content);
-            
+
             $decoded = json_decode($content, true);
         } else {
             $decoded = (array)$response;

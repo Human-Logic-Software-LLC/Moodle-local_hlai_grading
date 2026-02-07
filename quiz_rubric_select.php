@@ -97,13 +97,13 @@ foreach ($errors as $error) {
 }
 
  $managecontext = context_course::instance($course->id);
- if (has_capability('local/hlai_grading:configure', $managecontext)) {
-     $manageurl = new moodle_url('/local/hlai_grading/quiz_rubrics.php', ['courseid' => $course->id]);
-     echo html_writer::div(
-         html_writer::link($manageurl, get_string('quizrubric_manage_link', 'local_hlai_grading'), ['class' => 'button is-light']),
-         'mb-4'
-     );
- }
+if (has_capability('local/hlai_grading:configure', $managecontext)) {
+    $manageurl = new moodle_url('/local/hlai_grading/quiz_rubrics.php', ['courseid' => $course->id]);
+    echo html_writer::div(
+        html_writer::link($manageurl, get_string('quizrubric_manage_link', 'local_hlai_grading'), ['class' => 'button is-light']),
+        'mb-4'
+    );
+}
 
 echo html_writer::start_div('columns');
 
@@ -121,9 +121,7 @@ echo html_writer::end_tag('header');
 echo html_writer::start_div('iksha-widget__body');
 
 echo html_writer::start_tag('form', [
-    'method' => 'post',
-    'action' => $pageurl->out(false),
-    'class' => 'iksha-form',
+    'method' => 'post', 'action' => $pageurl->out(false), 'class' => 'iksha-form',
 ]);
 echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => 'save']);
 echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);

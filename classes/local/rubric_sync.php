@@ -30,7 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * Rubric_sync class.
  */
 class rubric_sync {
-
     /**
      * Write AI criterion scores back into Moodle's rubric grading interface.
      *
@@ -51,7 +50,7 @@ class rubric_sync {
         $context = \context_module::instance($cmid);
         $cm = get_coursemodule_from_id('assign', $cmid, 0, false, MUST_EXIST);
         $assign = new \assign($context, $cm, null);
-        
+
         // Get grading manager for this module.
         $gradingmanager = get_grading_manager($context, 'mod_assign', 'submissions');
         $gradingmethod = $gradingmanager->get_active_method();
@@ -183,8 +182,7 @@ class rubric_sync {
 
             // Add to fillings array in controller format
             $fillings['criteria'][$matchedcriterionid] = [
-                'levelid' => $matchedlevelid,
-                'remark' => $aifeedback,
+                'levelid' => $matchedlevelid, 'remark' => $aifeedback,
             ];
         }
 
@@ -345,8 +343,7 @@ class rubric_sync {
             }
 
             $fillings['criteria'][$matchedcriterionid] = [
-                'levelid' => $matchedlevelid,
-                'remark' => $aifeedback,
+                'levelid' => $matchedlevelid, 'remark' => $aifeedback,
             ];
         }
 

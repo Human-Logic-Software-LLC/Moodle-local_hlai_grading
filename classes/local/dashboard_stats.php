@@ -30,7 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * Dashboard_stats class.
  */
 class dashboard_stats {
-
     /**
      * Get global statistics for the admin dashboard.
      *
@@ -54,20 +53,20 @@ class dashboard_stats {
 
         // 5. Recent Activity Graph Data (Last 7 days)
         $weekago = time() - (7 * 24 * 3600);
-        $activitysql = "SELECT FROM_UNIXTIME(timecreated, '%Y-%m-%d') as date, COUNT(*) as count 
-                         FROM {hlai_grading_results} 
-                         WHERE timecreated > :time 
+        $activitysql = "SELECT FROM_UNIXTIME(timecreated, '%Y-%m-%d') as date, COUNT(*) as count
+                         FROM {hlai_grading_results}
+                         WHERE timecreated > :time
                          GROUP BY FROM_UNIXTIME(timecreated, '%Y-%m-%d')
                          ORDER BY date ASC";
-        
-        // Note: FROM_UNIXTIME usage might depend on DB type. 
+
+        // Note: FROM_UNIXTIME usage might depend on DB type.
         // For cross-db compatibility in Moodle, we often used to do this in PHP or use specific DB functions.
         // However, for simplicity let's stick to a basic count for now or handle date grouping in PHP if strictly needed.
         // Let's grab the raw timestamps and process in PHP for max compatibility.
-        
+
         $activityrawsql = "SELECT timecreated FROM {hlai_grading_results} WHERE timecreated > :time ORDER BY timecreated ASC";
         $rawactivity = $DB->get_fieldset_sql($activityrawsql, ['time' => $weekago]);
-        
+
         $activitydata = [];
         foreach ($rawactivity as $timestamp) {
             $date = date('Y-m-d', $timestamp);
@@ -92,14 +91,14 @@ class dashboard_stats {
                             GROUP BY c.id, c.shortname
                             ORDER BY count DESC";
         $topcourses = $DB->get_records_sql($topcoursessql, [], 0, 5);
-        
+
         $courselabels = [];
         $coursedata = [];
         foreach ($topcourses as $course) {
             $courselabels[] = $course->shortname;
             $coursedata[] = $course->count;
         }
-        
+
         // 7. Estimated Efficiency (Time Saved)
         // Assumption: Manual grading takes ~5 mins (300s) per item.
         // AI processing time is in DB, but "saved" is (Manual - AI).
@@ -111,36 +110,36 @@ class dashboard_stats {
         // This is expensive to calc for ALL records, so let's sample or just check for drastic diffs where we can.
         // For simplicity and performance, let's look at the 'reviewed' flag if we used it to track acceptance,
         // OR better yet, query a join where final grade != ai grade.
-        
+
         // Let's assume an override is if the grade changed by > 5%.
-        // Warning: This query might be slow on huge datasets. 
+        // Warning: This query might be slow on huge datasets.
         // We will only look at the last 100 graded items to keep dashboard fast.
-        
-        $trustsql = "SELECT r.grade as aigrade, r.maxgrade, gg.finalgrade, gi.grademax 
+
+        $trustsql = "SELECT r.grade as aigrade, r.maxgrade, gg.finalgrade, gi.grademax
                       FROM {hlai_grading_results} r
                       JOIN {hlai_grading_queue} q ON r.queueid = q.id
                       JOIN {grade_items} gi ON (gi.iteminstance = q.instanceid AND gi.itemmodule = q.modulename)
                       JOIN {grade_grades} gg ON (gg.itemid = gi.id AND gg.userid = r.userid)
-                      WHERE r.status = 'released' 
+                      WHERE r.status = 'released'
                       ORDER BY r.timecreated DESC";
-                      
+
         $comparisons = $DB->get_records_sql($trustsql, [], 0, 100);
-        
+
         $totalchecked = count($comparisons);
         $overrides = 0;
-        
+
         foreach ($comparisons as $row) {
             // Normalize
             $ainorm = ($row->maxgrade > 0) ? ($row->aigrade / $row->maxgrade) : 0;
             $finalnorm = ($row->grademax > 0) ? ($row->finalgrade / $row->grademax) :
                           (($row->maxgrade > 0) ? ($row->finalgrade / $row->maxgrade) : 0);
-            
+
             // If diff > 5%
             if (abs($ainorm - $finalnorm) > 0.05) {
                 $overrides++;
             }
         }
-        
+
         $trustscore = ($totalchecked > 0) ? round((($totalchecked - $overrides) / $totalchecked) * 100) : 100;
 
         $recenterrors = $this->get_recent_error_logs();
@@ -171,7 +170,7 @@ class dashboard_stats {
 
         // Verify course exists
         if (!$DB->record_exists('course', ['id' => $courseid])) {
-           return [];
+            return [];
         }
 
         // 1. Items in Queue for this course
@@ -179,31 +178,29 @@ class dashboard_stats {
 
         // 2. Graded Items for this course
         // Need to join via queueid to get courseid context
-        $gradedsql = "SELECT COUNT(r.id) 
+        $gradedsql = "SELECT COUNT(r.id)
                        FROM {hlai_grading_results} r
                        JOIN {hlai_grading_queue} q ON r.queueid = q.id
                        WHERE q.courseid = :courseid";
         $gradedcount = $DB->count_records_sql($gradedsql, ['courseid' => $courseid]);
 
         // 3. Upcoming/Recent items
-        $recentsql = "SELECT r.id, r.grade, r.timecreated, q.modulename, q.cmid 
+        $recentsql = "SELECT r.id, r.grade, r.timecreated, q.modulename, q.cmid
                        FROM {hlai_grading_results} r
                        JOIN {hlai_grading_queue} q ON r.queueid = q.id
                        WHERE q.courseid = :courseid
                        ORDER BY r.timecreated DESC";
         $recentitems = $DB->get_records_sql($recentsql, ['courseid' => $courseid], 0, 5);
-        
+
         $recentlist = [];
         foreach ($recentitems as $item) {
             $recentlist[] = [
-                'module' => $item->modulename,
-                'grade' => format_float($item->grade, 2),
-                'date' => userdate($item->timecreated),
+                'module' => $item->modulename, 'grade' => format_float($item->grade, 2), 'date' => userdate($item->timecreated),
             ];
         }
 
         // 4. Grade Distribution (Histogram)
-        $gradessql = "SELECT r.grade, r.maxgrade 
+        $gradessql = "SELECT r.grade, r.maxgrade
                        FROM {hlai_grading_results} r
                        JOIN {hlai_grading_queue} q ON r.queueid = q.id
                        WHERE q.courseid = :courseid AND r.grade IS NOT NULL";
@@ -219,11 +216,17 @@ class dashboard_stats {
                 $totalscoresum += $percentage;
                 $scorecount++;
 
-                if ($percentage <= 20) $buckets['0-20']++;
-                else if ($percentage <= 40) $buckets['21-40']++;
-                else if ($percentage <= 60) $buckets['41-60']++;
-                else if ($percentage <= 80) $buckets['61-80']++;
-                else $buckets['81-100']++;
+                if ($percentage <= 20) {
+                    $buckets['0-20']++;
+                } else if ($percentage <= 40) {
+                    $buckets['21-40']++;
+                } else if ($percentage <= 60) {
+                    $buckets['41-60']++;
+                } else if ($percentage <= 80) {
+                    $buckets['61-80']++;
+                } else {
+                    $buckets['81-100']++;
+                }
             }
         }
         $avgscore = $scorecount ? round($totalscoresum / $scorecount, 1) : 0;
@@ -237,9 +240,9 @@ class dashboard_stats {
                        WHERE q.courseid = :courseid AND rs.maxscore > 0
                        GROUP BY rs.criterionname
                        ORDER BY avgnormscore ASC"; // Ascending: Weakest first
-        
+
         $rubricstats = $DB->get_records_sql($rubricsql, ['courseid' => $courseid], 0, 5); // Bottom 5 criteria
-        
+
         $weakestcriteria = [];
         $weakestscores = [];
         foreach ($rubricstats as $stat) {
@@ -252,27 +255,25 @@ class dashboard_stats {
         // 6. At-Risk Students (Recent low grades)
         // Find students who scored < 50% on their most recent ai-graded submission
         $riskthreshold = 50; // Configurable ideally
-        
-        $risksql = "SELECT r.userid, r.grade, r.maxgrade, q.modulename, r.timecreated 
+
+        $risksql = "SELECT r.userid, r.grade, r.maxgrade, q.modulename, r.timecreated
                      FROM {hlai_grading_results} r
                      JOIN {hlai_grading_queue} q ON r.queueid = q.id
-                     WHERE q.courseid = :courseid 
-                       AND r.grade IS NOT NULL 
+                     WHERE q.courseid = :courseid
+                       AND r.grade IS NOT NULL
                        AND r.maxgrade > 0
                        AND (r.grade / r.maxgrade) * 100 < :threshold
                      ORDER BY r.timecreated DESC";
-        
+
         $riskyitems = $DB->get_records_sql($risksql, ['courseid' => $courseid, 'threshold' => $riskthreshold], 0, 5);
-        
+
         $atrisklist = [];
         foreach ($riskyitems as $item) {
             $user = $DB->get_record('user', ['id' => $item->userid], 'id, firstname, lastname');
             if ($user) {
                  $percentage = ($item->grade / $item->maxgrade) * 100;
                  $atrisklist[] = [
-                     'student' => fullname($user),
-                     'task' => $item->modulename,
-                     'score' => round($percentage, 1) . '%'
+                     'student' => fullname($user), 'task' => $item->modulename, 'score' => round($percentage, 1) . '%',
                  ];
             }
         }
@@ -286,7 +287,7 @@ class dashboard_stats {
             'grade_data' => array_values($buckets),
             'rubric_labels' => $weakestcriteria,
             'rubric_data' => $weakestscores,
-            'at_risk_students' => $atrisklist
+            'at_risk_students' => $atrisklist,
         ];
     }
 
@@ -314,8 +315,7 @@ class dashboard_stats {
                 'status_class' => 'iksha-badge--danger',
                 'message' => 'AI hub timeout while fetching grading response.',
                 'error_url' => (new \moodle_url('/local/hlai_grading/error_details.php', ['id' => 182]))->out(false),
-            ],
-            [
+            ], [
                 'time' => userdate(time() - 7200),
                 'queueid' => 176,
                 'queueid_display' => '#176',
@@ -323,8 +323,7 @@ class dashboard_stats {
                 'status_class' => 'iksha-badge--warning',
                 'message' => 'Error (attempt 2/3): Missing answer key for assign 24.',
                 'error_url' => (new \moodle_url('/local/hlai_grading/error_details.php', ['id' => 176]))->out(false),
-            ],
-            [
+            ], [
                 'time' => userdate(time() - 10800),
                 'queueid' => 171,
                 'queueid_display' => '#171',
@@ -360,29 +359,15 @@ class dashboard_stats {
 
         $recentlist = [
             [
-                'module' => 'assign',
-                'grade' => format_float(88.0, 2),
-                'date' => userdate($now - 3600),
-            ],
-            [
-                'module' => 'quiz',
-                'grade' => format_float(74.5, 2),
-                'date' => userdate($now - 7200),
-            ],
-            [
-                'module' => 'assign',
-                'grade' => format_float(92.3, 2),
-                'date' => userdate($now - 14400),
-            ],
-            [
-                'module' => 'quiz',
-                'grade' => format_float(68.9, 2),
-                'date' => userdate($now - 21600),
-            ],
-            [
-                'module' => 'assign',
-                'grade' => format_float(81.2, 2),
-                'date' => userdate($now - 28800),
+                'module' => 'assign', 'grade' => format_float(88.0, 2), 'date' => userdate($now - 3600),
+            ], [
+                'module' => 'quiz', 'grade' => format_float(74.5, 2), 'date' => userdate($now - 7200),
+            ], [
+                'module' => 'assign', 'grade' => format_float(92.3, 2), 'date' => userdate($now - 14400),
+            ], [
+                'module' => 'quiz', 'grade' => format_float(68.9, 2), 'date' => userdate($now - 21600),
+            ], [
+                'module' => 'assign', 'grade' => format_float(81.2, 2), 'date' => userdate($now - 28800),
             ],
         ];
 
@@ -453,7 +438,9 @@ class dashboard_stats {
                 'status' => $statuslabel,
                 'status_class' => $statusclass,
                 'message' => $message,
-                'error_url' => $queueid ? (new \moodle_url('/local/hlai_grading/error_details.php', ['id' => $queueid]))->out(false) : null,
+                'error_url' => $queueid
+                    ? (new \moodle_url('/local/hlai_grading/error_details.php', ['id' => $queueid]))->out(false)
+                    : null,
             ];
         }
 

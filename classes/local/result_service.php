@@ -39,7 +39,6 @@ use stdClass;
  * Handles release/reject operations outside the UI.
  */
 class result_service {
-
     /**
      * Load all context data needed to manage an AI result.
      *
@@ -167,8 +166,7 @@ class result_service {
 
                 if (!empty($result->reasoning)) {
                     $formdata->assignfeedbackcomments_editor = [
-                        'text' => $result->reasoning,
-                        'format' => FORMAT_HTML,
+                        'text' => $result->reasoning, 'format' => FORMAT_HTML,
                     ];
                 }
 
@@ -240,23 +238,15 @@ class result_service {
         );
 
         $eventdata = [
-            'objectid' => $result->id,
-            'context' => $context,
-            'courseid' => $course->id,
-            'relateduserid' => $result->userid,
-            'other' => [
-                'queueid' => $result->queueid,
-                'action' => 'released',
-                'grade' => $result->grade,
+            'objectid' => $result->id, 'context' => $context, 'courseid' => $course->id, 'relateduserid' => $result->userid, 'other' => [
+                'queueid' => $result->queueid, 'action' => 'released', 'grade' => $result->grade,
             ],
         ];
         \local_hlai_grading\event\grade_reviewed::create($eventdata)->trigger();
         \local_hlai_grading\event\grade_released::create($eventdata)->trigger();
 
         return [
-            'resultid' => $result->id,
-            'status' => $result->status,
-            'timereviewed' => $result->timereviewed,
+            'resultid' => $result->id, 'status' => $result->status, 'timereviewed' => $result->timereviewed,
         ];
     }
 
@@ -304,22 +294,14 @@ class result_service {
         );
 
         $eventdata = [
-            'objectid' => $result->id,
-            'context' => $context,
-            'courseid' => $course->id,
-            'relateduserid' => $result->userid,
-            'other' => [
-                'queueid' => $result->queueid,
-                'action' => 'rejected',
-                'grade' => $result->grade,
+            'objectid' => $result->id, 'context' => $context, 'courseid' => $course->id, 'relateduserid' => $result->userid, 'other' => [
+                'queueid' => $result->queueid, 'action' => 'rejected', 'grade' => $result->grade,
             ],
         ];
         \local_hlai_grading\event\grade_reviewed::create($eventdata)->trigger();
 
         return [
-            'resultid' => $result->id,
-            'status' => $result->status,
-            'timereviewed' => $result->timereviewed,
+            'resultid' => $result->id, 'status' => $result->status, 'timereviewed' => $result->timereviewed,
         ];
     }
 }

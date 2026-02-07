@@ -36,7 +36,6 @@ use local_hlai_grading\local\dashboard_stats;
  * Dashboard page renderable.
  */
 class dashboard_page implements renderable, templatable {
-
     /** @var string 'admin' or 'teacher' */
     protected $viewtype;
 
@@ -72,7 +71,7 @@ class dashboard_page implements renderable, templatable {
         $data->is_admin = ($this->viewtype === 'admin');
         $data->is_teacher = ($this->viewtype === 'teacher');
         $data->is_demo = false;
-        
+
         // Scope Iksha styles to this dashboard container.
         $data->container_class = 'local-hlai-iksha';
 
@@ -101,7 +100,7 @@ class dashboard_page implements renderable, templatable {
                 'labels' => $stats['activity_chart_labels'],
                 'data' => $stats['activity_chart_data'],
                 'top_courses_labels' => $stats['top_courses_labels'],
-                'top_courses_data' => $stats['top_courses_data']
+                'top_courses_data' => $stats['top_courses_data'],
             ]);
         } else if ($data->is_teacher && $this->courseid) {
             if ($this->demomode) {
@@ -115,19 +114,14 @@ class dashboard_page implements renderable, templatable {
                 }
             }
             $data->stats = [
-                'queue_count' => $stats['queue_count'],
-                'graded_count' => $stats['graded_count'],
-                'average_score' => $stats['average_score'],
+                'queue_count' => $stats['queue_count'], 'graded_count' => $stats['graded_count'], 'average_score' => $stats['average_score'],
             ];
             $data->recent_items = array_values($stats['recent_items']);
             $data->at_risk_students = array_values($stats['at_risk_students']);
-            
+
             // Pass chart data for teacher
             $data->chart_data_json = json_encode([
-                'grade_labels' => $stats['grade_labels'],
-                'grade_data' => $stats['grade_data'],
-                'rubric_labels' => $stats['rubric_labels'],
-                'rubric_data' => $stats['rubric_data']
+                'grade_labels' => $stats['grade_labels'], 'grade_data' => $stats['grade_data'], 'rubric_labels' => $stats['rubric_labels'], 'rubric_data' => $stats['rubric_data'],
             ]);
         }
 

@@ -30,7 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * Renderer class.
  */
 class renderer extends \plugin_renderer_base {
-
     /**
      * Render the dashboard page.
      *
@@ -81,14 +80,12 @@ class renderer extends \plugin_renderer_base {
             if ($queue) {
                 if ($queue->status === 'pending') {
                     return \html_writer::tag('span', get_string('badgegrading', 'local_hlai_grading'), [
-                        'class' => 'badge badge-info',
-                        'title' => get_string('badgegradingtitle', 'local_hlai_grading')
+                        'class' => 'badge badge-info', 'title' => get_string('badgegradingtitle', 'local_hlai_grading'),
                     ]);
                 }
                 if ($queue->status === 'failed') {
                     return \html_writer::tag('span', get_string('badgesfailed', 'local_hlai_grading'), [
-                        'class' => 'badge badge-danger',
-                        'title' => get_string('badgesfailedtitle', 'local_hlai_grading')
+                        'class' => 'badge badge-danger', 'title' => get_string('badgesfailedtitle', 'local_hlai_grading'),
                     ]);
                 }
             }
@@ -96,34 +93,28 @@ class renderer extends \plugin_renderer_base {
         }
 
         $info = (object) [
-            'grade' => format_float((float)$result->grade, 2),
-            'maxgrade' => format_float((float)$result->maxgrade, 2),
-            'confidence' => (int)($result->confidence ?? 0)
+            'grade' => format_float((float)$result->grade, 2), 'maxgrade' => format_float((float)$result->maxgrade, 2), 'confidence' => (int)($result->confidence ?? 0),
         ];
 
         switch ($result->status) {
             case 'draft':
                 $badge = \html_writer::tag('span', get_string('badgedraft', 'local_hlai_grading'), [
-                    'class' => 'badge badge-warning mr-1',
-                    'title' => get_string('badgegradetitle', 'local_hlai_grading', $info)
+                    'class' => 'badge badge-warning mr-1', 'title' => get_string('badgegradetitle', 'local_hlai_grading', $info),
                 ]);
                 $reviewurl = new \moodle_url('/local/hlai_grading/release.php', ['id' => $result->id]);
                 $reviewbtn = \html_writer::link($reviewurl, get_string('badgebuttonreview', 'local_hlai_grading'), [
-                    'class' => 'btn btn-sm btn-primary ml-1',
-                    'title' => get_string('badgebuttonreviewtitle', 'local_hlai_grading')
+                    'class' => 'btn btn-sm btn-primary ml-1', 'title' => get_string('badgebuttonreviewtitle', 'local_hlai_grading'),
                 ]);
                 return $badge . $reviewbtn;
 
             case 'released':
                 return \html_writer::tag('span', get_string('badgereleased', 'local_hlai_grading'), [
-                    'class' => 'badge badge-success',
-                    'title' => get_string('badgereleasedtitle', 'local_hlai_grading')
+                    'class' => 'badge badge-success', 'title' => get_string('badgereleasedtitle', 'local_hlai_grading'),
                 ]);
 
             case 'rejected':
                 return \html_writer::tag('span', get_string('badgerejected', 'local_hlai_grading'), [
-                    'class' => 'badge badge-secondary',
-                    'title' => get_string('badgerejectedtitle', 'local_hlai_grading')
+                    'class' => 'badge badge-secondary', 'title' => get_string('badgerejectedtitle', 'local_hlai_grading'),
                 ]);
         }
 
@@ -140,7 +131,7 @@ class renderer extends \plugin_renderer_base {
         global $DB;
 
         $counts = $DB->get_record_sql("
-            SELECT 
+            SELECT
                 COUNT(*) AS total,
                 SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS pending_review,
                 SUM(CASE WHEN status = 'released' THEN 1 ELSE 0 END) AS released
@@ -153,9 +144,7 @@ class renderer extends \plugin_renderer_base {
         }
 
         $summarydata = (object)[
-            'total' => (int)$counts->total,
-            'pending' => (int)($counts->pending_review ?? 0),
-            'released' => (int)($counts->released ?? 0)
+            'total' => (int)$counts->total, 'pending' => (int)($counts->pending_review ?? 0), 'released' => (int)($counts->released ?? 0),
         ];
 
         if ($summarydata->pending === 0) {
@@ -176,7 +165,8 @@ class renderer extends \plugin_renderer_base {
                 $params['courseid'] = $courseid;
             }
             $viewurl = new \moodle_url('/local/hlai_grading/view.php', $params);
-            $html .= \html_writer::link($viewurl,
+            $html .= \html_writer::link(
+                $viewurl,
                 get_string('summaryreviewbutton', 'local_hlai_grading', $summarydata->pending),
                 ['class' => 'btn btn-primary btn-sm']
             );
@@ -203,9 +193,7 @@ class renderer extends \plugin_renderer_base {
         }
 
         $params = [
-            'instanceid' => $cm->instance,
-            'modname' => 'assign',
-            'status' => 'released',
+            'instanceid' => $cm->instance, 'modname' => 'assign', 'status' => 'released',
         ];
         $sql = "
             SELECT *
@@ -283,8 +271,7 @@ class renderer extends \plugin_renderer_base {
             $rubrichtml = $rubricrenderer->display_instances($instances, '', false);
 
             $gradelabel = (object)[
-                'grade' => format_float((float)$result->grade, 2),
-                'maxgrade' => format_float((float)$result->maxgrade, 2),
+                'grade' => format_float((float)$result->grade, 2), 'maxgrade' => format_float((float)$result->maxgrade, 2),
             ];
 
             $statuskey = $result->status === 'draft' ? 'badgedraft' : ($result->status === 'released' ? 'badgereleased' : 'status');
@@ -292,19 +279,21 @@ class renderer extends \plugin_renderer_base {
             $statusbadge = '';
             if ($statuskey !== 'status') {
                 $statusbadge = \html_writer::tag('span', get_string($statuskey, 'local_hlai_grading'), [
-                    'class' => 'badge ' . $statusclass . ' mr-2'
+                    'class' => 'badge ' . $statusclass . ' mr-2',
                 ]);
             }
 
             $itemshtml .= \html_writer::start_div('ai-rubric-preview-item mb-5');
-            $itemshtml .= \html_writer::tag('h6',
+            $itemshtml .= \html_writer::tag(
+                'h6',
                 get_string('assignmentrubricstudent', 'local_hlai_grading', format_string($studentname)),
                 ['class' => 'mb-1']
             );
             if ($statusbadge) {
                 $itemshtml .= $statusbadge;
             }
-            $itemshtml .= \html_writer::tag('span',
+            $itemshtml .= \html_writer::tag(
+                'span',
                 get_string('assignmentrubricgrade', 'local_hlai_grading', $gradelabel),
                 ['class' => 'text-muted d-block mb-3']
             );
@@ -326,7 +315,7 @@ class renderer extends \plugin_renderer_base {
 
             if ($feedbacklist !== '') {
                 $itemshtml .= \html_writer::tag('h6', get_string('assignmentrubricfeedbackheading', 'local_hlai_grading'), [
-                    'class' => 'mt-4 mb-2'
+                    'class' => 'mt-4 mb-2',
                 ]);
                 $itemshtml .= \html_writer::div($feedbacklist, 'ai-criterion-feedback-list');
             }

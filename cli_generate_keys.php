@@ -22,11 +22,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('CLI_SCRIPT')) {
-    define('CLI_SCRIPT', true);
-}
-require('C:\\xampp81\\htdocs\\moodle41\\config.php');
+define('CLI_SCRIPT', true);
 
+require(__DIR__ . '/../../config.php');
+
+/**
+ * Normalize text by stripping HTML tags, decoding entities, and collapsing whitespace.
+ *
+ * @param string $text The raw text to normalize.
+ * @return string The cleaned plain-text string.
+ */
 function normalize_text_local(string $text): string {
     $plain = trim(strip_tags($text));
     if ($plain === '') {
@@ -37,12 +42,17 @@ function normalize_text_local(string $text): string {
     return trim($plain);
 }
 
+/**
+ * Generate an answer key using the AI provider.
+ *
+ * @param string $prompt The prompt to send to the AI provider.
+ * @return string|null The generated key text, or null if no provider is available.
+ */
 function ai_generate_key(string $prompt): ?string {
     if (class_exists('\\\\local_hlai_hub\\\\api')) {
         if (\local_hlai_hub\api::is_ready()) {
             $response = \local_hlai_hub\api::generate('local_hlai_grading', 'quiz_essay_key', $prompt, [
-                'processing_mode' => 'balanced',
-                'max_tokens' => 500,
+                'processing_mode' => 'balanced', 'max_tokens' => 500,
             ]);
             return $response->content ?? '';
         }
@@ -131,9 +141,7 @@ foreach ($missing as $essay) {
     }
 
     $update = (object)[
-        'id' => $essay->id,
-        'graderinfo' => $content,
-        'graderinfoformat' => FORMAT_HTML,
+        'id' => $essay->id, 'graderinfo' => $content, 'graderinfoformat' => FORMAT_HTML,
     ];
     $DB->update_record('qtype_essay_options', $update);
     $generated++;

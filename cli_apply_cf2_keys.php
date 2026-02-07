@@ -22,12 +22,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('CLI_SCRIPT')) {
-    define('CLI_SCRIPT', true);
-}
+define('CLI_SCRIPT', true);
 
-require('C:\\xampp81\\htdocs\\moodle41\\config.php');
+require(__DIR__ . '/../../config.php');
 
+/**
+ * Normalize text by stripping HTML tags and collapsing whitespace.
+ *
+ * @param string $text The text to normalize.
+ * @return string The normalized text.
+ */
 function normalize_text_local(string $text): string {
     $plain = trim(strip_tags($text));
     if ($plain === '') {
@@ -59,11 +63,13 @@ echo "Quiz: {$quiz->name} (ID {$quiz->id})\n";
 $keymap = [
     [
         'match' => 'gnocchi parisienne',
-        'answer' => "Start by making a choux pastry. Pipe the pastry onto a flour-dusted surface, cut into small pieces, and then cook them in boiling water.",
+        'answer' => "Start by making a choux pastry. Pipe the pastry onto a flour-dusted surface, " .
+            "cut into small pieces, and then cook them in boiling water.",
     ],
     [
         'match' => 'washed thoroughly before use',
-        'answer' => "Any of the below:\n- To remove dirt.\n- To remove bacteria on the surface of the vegetable.\n- To remove insects that may be present.",
+        'answer' => "Any of the below:\n- To remove dirt.\n- To remove bacteria on the surface " .
+            "of the vegetable.\n- To remove insects that may be present.",
     ],
     [
         'match' => 'rice pilaf',
@@ -71,11 +77,13 @@ $keymap = [
     ],
     [
         'match' => 'prepare rice before cooking',
-        'answer' => "Rice may be washed before cooking. Washing removes loose starch from the grains and helps prevent the rice from sticking together.",
+        'answer' => "Rice may be washed before cooking. Washing removes loose starch from the grains " .
+            "and helps prevent the rice from sticking together.",
     ],
     [
         'match' => 'nutritional value of pasta',
-        'answer' => "Pasta is nutritious; its complex carbohydrates provide energy similar to protein while being lower in calories and fat.",
+        'answer' => "Pasta is nutritious; its complex carbohydrates provide energy similar to protein " .
+            "while being lower in calories and fat.",
     ],
     [
         'match' => 'uses of farinaceous',
@@ -83,31 +91,46 @@ $keymap = [
     ],
     [
         'match' => 'difference in ingredients and preparation between dry pasta and fresh pasta',
-        'answer' => "Fresh pasta is typically made by hand, often contains eggs, and uses OO or all-purpose flour. Dry pasta is mostly machine-made, usually uses water only, and uses hard or high-protein flour.",
+        'answer' => "Fresh pasta is typically made by hand, often contains eggs, and uses OO or " .
+            "all-purpose flour. Dry pasta is mostly machine-made, usually uses water only, " .
+            "and uses hard or high-protein flour.",
     ],
     [
         'match' => 'portion size of pasta',
-        'answer' => "Factors that may affect portion size include:\n- Type of guest and expectations.\n- Served as a main course or appetizer.\n- Time of the day.\n- Size of the menu.",
+        'answer' => "Factors that may affect portion size include:\n" .
+            "- Type of guest and expectations.\n" .
+            "- Served as a main course or appetizer.\n" .
+            "- Time of the day.\n- Size of the menu.",
     ],
     [
         'match' => 'product yield is affected',
-        'answer' => "Leg lamb has a large bone which reduces edible yield and makes portioning harder, lowering yield. Fresh fish has low yield due to waste (intestine, bones, skin) and requires skill to fillet.",
+        'answer' => "Leg lamb has a large bone which reduces edible yield and makes portioning " .
+            "harder, lowering yield. Fresh fish has low yield due to waste " .
+            "(intestine, bones, skin) and requires skill to fillet.",
     ],
     [
         'match' => 'correct cooking technique',
-        'answer' => "Steps:\n- Clean and cut the vegetable to the correct size.\n- Boil a large pot of salted water (as salty as the sea).\n- Cook for 2 to 7 minutes until al dente, depending on size.\n- Transfer to ice-cold water to stop cooking and preserve color.\n- Remove and store covered in a cool, dry place until ready to use.",
+        'answer' => "Steps:\n- Clean and cut the vegetable to the correct size.\n" .
+            "- Boil a large pot of salted water (as salty as the sea).\n" .
+            "- Cook for 2 to 7 minutes until al dente, depending on size.\n" .
+            "- Transfer to ice-cold water to stop cooking and preserve color.\n" .
+            "- Remove and store covered in a cool, dry place until ready to use.",
     ],
     [
         'match' => 'sub classifications for root vegetables',
-        'answer' => "Roots (beetroot, carrot, radish, turnip), bulbs (garlic, onion, leek), and tubers (potato, sweet potato, Jerusalem artichoke).",
+        'answer' => "Roots (beetroot, carrot, radish, turnip), bulbs (garlic, onion, leek), " .
+            "and tubers (potato, sweet potato, Jerusalem artichoke).",
     ],
     [
         'match' => 'green asparagus',
-        'answer' => "Store green asparagus wrapped or on a damp cloth. Cook by sauteing in oil or butter to retain water-soluble vitamins.",
+        'answer' => "Store green asparagus wrapped or on a damp cloth. " .
+            "Cook by sauteing in oil or butter to retain water-soluble vitamins.",
     ],
     [
         'match' => 'aim of cooking vegetables',
-        'answer' => "Soften fibers with minimal water absorption, minimize nutrient loss, maintain palatability, make starch more digestible, and preserve natural colors and textures.",
+        'answer' => "Soften fibers with minimal water absorption, minimize nutrient loss, " .
+            "maintain palatability, make starch more digestible, and preserve " .
+            "natural colors and textures.",
     ],
     [
         'match' => 'best preparation for these tomatoes',
@@ -119,11 +142,13 @@ $keymap = [
     ],
     [
         'match' => 'yield tests',
-        'answer' => "To establish the real cost of usable portions compared to whole vegetables, and to determine the whole weight needed to buy for sufficient usable portions.",
+        'answer' => "To establish the real cost of usable portions compared to whole vegetables, " .
+            "and to determine the whole weight needed to buy for sufficient usable portions.",
     ],
     [
         'match' => 'prepare a fresh pasta dough',
-        'answer' => "Mix flour, eggs, and salt into a consistent ball, rest the dough in the cooler to relax gluten, then roll out by hand or pasta machine and cut into shape.",
+        'answer' => "Mix flour, eggs, and salt into a consistent ball, rest the dough in the cooler " .
+            "to relax gluten, then roll out by hand or pasta machine and cut into shape.",
     ],
 ];
 
@@ -139,9 +164,7 @@ $unmatched = [];
 
 foreach ($slots as $slot) {
     $ref = $DB->get_record('question_references', [
-        'component' => 'mod_quiz',
-        'questionarea' => 'slot',
-        'itemid' => $slot->id,
+        'component' => 'mod_quiz', 'questionarea' => 'slot', 'itemid' => $slot->id,
     ], '*', IGNORE_MISSING);
 
     if (!$ref) {
@@ -176,10 +199,7 @@ foreach ($slots as $slot) {
 
     if (!$found) {
         $unmatched[] = (object)[
-            'slot' => $slot->slot,
-            'id' => $question->id,
-            'name' => $question->name,
-            'text' => $text,
+            'slot' => $slot->slot, 'id' => $question->id, 'name' => $question->name, 'text' => $text,
         ];
         continue;
     }

@@ -35,7 +35,6 @@ use local_hlai_grading\local\content_extractor;
  * Observer class.
  */
 class observer {
-
     /**
      * Fired when an assignment submission is made.
      *
@@ -57,7 +56,7 @@ class observer {
         } else {
             $cmid = $data['contextinstanceid'] ?? $data['other']['cmid'] ?? null;
         }
-        
+
         $courseid = $data['courseid'] ?? null;
         $userid   = $event->relateduserid ?? $data['userid'] ?? $USER->id;
 
@@ -68,27 +67,27 @@ class observer {
         $keytext = '';
         $filesummary = [];
         $submission = null;
-        
+
         if ($cmid && $courseid) {
             $cm = get_coursemodule_from_id('assign', $cmid, $courseid, false, IGNORE_MISSING);
             if ($cm && !empty($cm->instance)) {
                 $assignid = (int)$cm->instance;
-                
+
                 // Get the assignment object to fetch submission text and grading key.
                 try {
                     $assigncontext = \context_module::instance($cm->id);
                     $assign = new \assign($assigncontext, $cm, null);
                     $assignmentname = $assign->get_instance()->name;
-                    
+
                     // Get the submission
                     $submission = $assign->get_user_submission($userid, false);
-                    
+
                     if ($submission) {
                         $extracted = content_extractor::extract_from_assignment($assign, $submission);
                         $submissiontext = $extracted['text'] ?? '';
                         $filesummary = $extracted['files'] ?? [];
                     }
-                    
+
                     $assigninstance = $assign->get_instance();
                     $graderinfo = '';
                     if ($assigninstance && property_exists($assigninstance, 'gradinginstructions')) {
@@ -98,7 +97,6 @@ class observer {
                         $formatted = format_text($graderinfo, $assigninstance->gradinginstructionsformat ?? FORMAT_HTML, ['context' => $assigncontext]);
                         $keytext = trim(strip_tags($formatted));
                     }
-
                 } catch (\Exception $e) {
                     // If we can't get submission or grading key, continue anyway
                     $submissiontext = '';
@@ -116,7 +114,8 @@ class observer {
                     $keytext = $custom;
                 }
             } catch (\Throwable $e) {
-                // Ignore settings lookup errors.
+                // Silently ignore - event continues regardless.
+                unset($e);
             }
         }
 
