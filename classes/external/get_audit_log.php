@@ -36,13 +36,15 @@ use external_multiple_structure;
 use external_single_structure;
 use external_value;
 
-
-
 /**
  * REST export for the hlai_grading_log audit trail.
  */
 class get_audit_log extends external_api {
-
+    /**
+     * Define parameters for the execute function.
+     *
+     * @return external_function_parameters The parameter definition.
+     */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'queueid' => new external_value(PARAM_INT, 'Filter by queue id', \VALUE_DEFAULT, null),
@@ -52,6 +54,15 @@ class get_audit_log extends external_api {
         ]);
     }
 
+    /**
+     * Execute the audit log retrieval.
+     *
+     * @param int|null $queueid Filter by queue ID.
+     * @param int|null $resultid Filter by result ID.
+     * @param int|null $userid Filter by user ID.
+     * @param int $limit Maximum rows to return.
+     * @return array The audit log entries.
+     */
     public static function execute($queueid = null, $resultid = null, $userid = null, $limit = 50): array {
         global $DB;
 
@@ -105,6 +116,11 @@ class get_audit_log extends external_api {
         return $entries;
     }
 
+    /**
+     * Define the return structure.
+     *
+     * @return external_multiple_structure The return definition.
+     */
     public static function execute_returns(): external_multiple_structure {
         return new external_multiple_structure(new external_single_structure([
             'id' => new external_value(PARAM_INT, 'Log ID'),

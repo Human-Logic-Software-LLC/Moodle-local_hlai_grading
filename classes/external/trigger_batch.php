@@ -42,12 +42,10 @@ use local_hlai_grading\local\workflow_manager;
 use local_hlai_grading\rubric_analyzer;
 use moodle_exception;
 
-
 /**
  * REST handler for the batch grading trigger (Spec §9.3 "POST /grade/batch").
  */
 class trigger_batch extends external_api {
-
     /**
      * Parameters mirror the JSON body from the spec.
      *

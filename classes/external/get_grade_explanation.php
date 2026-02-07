@@ -40,7 +40,6 @@ use external_value;
  * Mirrors §21.7 in AI_Grading_Technical_Spec.
  */
 class get_grade_explanation extends external_api {
-
     /**
      * Define parameters.
      *

@@ -38,7 +38,6 @@ use external_multiple_structure;
  * External API for AI grading status.
  */
 class get_ai_statuses extends external_api {
-
     /**
      * Parameter definition for get_ai_statuses.
      *
@@ -60,7 +59,7 @@ class get_ai_statuses extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::execute_parameters(), [
-            'cmid' => $cmid
+            'cmid' => $cmid,
         ]);
 
         $cm = get_coursemodule_from_id('assign', $params['cmid'], 0, false, MUST_EXIST);
