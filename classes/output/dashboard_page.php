@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 use renderable;
 use templatable;
 use renderer_base;
@@ -95,7 +93,7 @@ class dashboard_page implements renderable, templatable {
                 'trust_score' => $stats['trust_score'],
             ];
             $data->error_logs = $stats['error_logs'] ?? [];
-            // Pass chart data as JSON string for JS to pick up
+            // Pass chart data as JSON string for JS to pick up.
             $data->chart_data_json = json_encode([
                 'labels' => $stats['activity_chart_labels'],
                 'data' => $stats['activity_chart_data'],
@@ -114,14 +112,19 @@ class dashboard_page implements renderable, templatable {
                 }
             }
             $data->stats = [
-                'queue_count' => $stats['queue_count'], 'graded_count' => $stats['graded_count'], 'average_score' => $stats['average_score'],
+                'queue_count' => $stats['queue_count'],
+                'graded_count' => $stats['graded_count'],
+                'average_score' => $stats['average_score'],
             ];
             $data->recent_items = array_values($stats['recent_items']);
             $data->at_risk_students = array_values($stats['at_risk_students']);
 
-            // Pass chart data for teacher
+            // Pass chart data for teacher.
             $data->chart_data_json = json_encode([
-                'grade_labels' => $stats['grade_labels'], 'grade_data' => $stats['grade_data'], 'rubric_labels' => $stats['rubric_labels'], 'rubric_data' => $stats['rubric_data'],
+                'grade_labels' => $stats['grade_labels'],
+                'grade_data' => $stats['grade_data'],
+                'rubric_labels' => $stats['rubric_labels'],
+                'rubric_data' => $stats['rubric_data'],
             ]);
         }
 

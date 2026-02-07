@@ -199,7 +199,11 @@ if ($confirmdelete && $existing) {
         html_writer::tag('i', '', ['class' => 'fa fa-exclamation-triangle', 'aria-hidden' => 'true']),
         'iksha-widget__icon iksha-widget__icon--warning'
     );
-    echo html_writer::tag('h3', get_string('quizrubric_delete_confirm', 'local_hlai_grading', format_string($existing->name)), ['class' => 'iksha-widget__title']);
+    echo html_writer::tag(
+        'h3',
+        get_string('quizrubric_delete_confirm', 'local_hlai_grading', format_string($existing->name)),
+        ['class' => 'iksha-widget__title']
+    );
     echo html_writer::end_div();
     echo html_writer::end_tag('header');
     echo html_writer::start_div('iksha-widget__body');
@@ -380,7 +384,8 @@ if ($courseid) {
     echo html_writer::start_div('select is-fullwidth');
     echo html_writer::start_tag('select', ['name' => 'visibility']);
     $visibilities = [
-        'course' => get_string('quizrubric_visibility_course', 'local_hlai_grading'), 'global' => get_string('quizrubric_visibility_global', 'local_hlai_grading'),
+        'course' => get_string('quizrubric_visibility_course', 'local_hlai_grading'),
+        'global' => get_string('quizrubric_visibility_global', 'local_hlai_grading'),
     ];
     foreach ($visibilities as $value => $label) {
         $selected = ($formdata->visibility === $value) ? ['selected' => 'selected'] : [];
@@ -399,7 +404,8 @@ echo html_writer::start_div('field');
 echo html_writer::tag('label', get_string('quizrubric_items', 'local_hlai_grading'), ['class' => 'label']);
 echo html_writer::start_div('control');
 echo html_writer::tag('textarea', s($formdata->items), [
-    'name' => 'items', 'rows' => 8, 'class' => 'textarea', 'placeholder' => get_string('quizrubric_items_example', 'local_hlai_grading'),
+    'name' => 'items', 'rows' => 8, 'class' => 'textarea',
+    'placeholder' => get_string('quizrubric_items_example', 'local_hlai_grading'),
 ]);
 echo html_writer::end_div();
 echo html_writer::tag('p', get_string('quizrubric_items_help', 'local_hlai_grading'), ['class' => 'iksha-help']);

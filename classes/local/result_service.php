@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 use context_module;
 use local_hlai_grading\local\grade_pusher;
 use local_hlai_grading\local\quiz_summary;
@@ -238,8 +236,14 @@ class result_service {
         );
 
         $eventdata = [
-            'objectid' => $result->id, 'context' => $context, 'courseid' => $course->id, 'relateduserid' => $result->userid, 'other' => [
-                'queueid' => $result->queueid, 'action' => 'released', 'grade' => $result->grade,
+            'objectid' => $result->id,
+            'context' => $context,
+            'courseid' => $course->id,
+            'relateduserid' => $result->userid,
+            'other' => [
+                'queueid' => $result->queueid,
+                'action' => 'released',
+                'grade' => $result->grade,
             ],
         ];
         \local_hlai_grading\event\grade_reviewed::create($eventdata)->trigger();
@@ -294,8 +298,14 @@ class result_service {
         );
 
         $eventdata = [
-            'objectid' => $result->id, 'context' => $context, 'courseid' => $course->id, 'relateduserid' => $result->userid, 'other' => [
-                'queueid' => $result->queueid, 'action' => 'rejected', 'grade' => $result->grade,
+            'objectid' => $result->id,
+            'context' => $context,
+            'courseid' => $course->id,
+            'relateduserid' => $result->userid,
+            'other' => [
+                'queueid' => $result->queueid,
+                'action' => 'rejected',
+                'grade' => $result->grade,
             ],
         ];
         \local_hlai_grading\event\grade_reviewed::create($eventdata)->trigger();

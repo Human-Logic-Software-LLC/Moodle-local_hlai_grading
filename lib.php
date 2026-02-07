@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Extend the global navigation with AI grading links.
  *
@@ -42,7 +40,7 @@ function local_hlai_grading_extend_navigation(global_navigation $navigation) {
         return;
     }
 
-    // Link to the new metrics dashboard
+    // Link to the new metrics dashboard.
     $urlparams = ['courseid' => $courseid];
 
     $node = $navigation->add(
@@ -65,9 +63,9 @@ function local_hlai_grading_extend_navigation(global_navigation $navigation) {
 function local_hlai_grading_extend_settings_navigation(settings_navigation $settingsnav, context $context) {
     global $PAGE;
 
-    // Add to site administration
+    // Add to site administration.
     if ($context->contextlevel == CONTEXT_SYSTEM) {
-        // Try common node names (theme-dependent)
+        // Try common node names (theme-dependent).
         $systemnode = $settingsnav->find('siteadmin', navigation_node::TYPE_SITE_ADMIN);
         if (!$systemnode) {
             $systemnode = $settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
@@ -86,7 +84,7 @@ function local_hlai_grading_extend_settings_navigation(settings_navigation $sett
         }
     }
 
-    // Add to course administration when in assignment
+    // Add to course administration when in assignment.
     if ($PAGE->cm && in_array($PAGE->cm->modname, ['assign', 'quiz'], true)) {
         $coursenode = $settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
         if ($coursenode && has_capability('local/hlai_grading:releasegrades', $context)) {
@@ -128,7 +126,7 @@ function local_hlai_grading_extend_settings_navigation(settings_navigation $sett
  */
 function local_hlai_grading_extend_navigation_course(navigation_node $navigation, stdClass $course, context_course $context) {
     if (has_capability('local/hlai_grading:releasegrades', $context)) {
-        // Review & release page
+        // Review & release page.
         $navigation->add(
             get_string('navcourse', 'local_hlai_grading'),
             new moodle_url('/local/hlai_grading/view.php', ['courseid' => $course->id, 'module' => 'assign']),
@@ -137,7 +135,7 @@ function local_hlai_grading_extend_navigation_course(navigation_node $navigation
             'aigrading_view'
         );
 
-        // Dashboard page
+        // Dashboard page.
         $navigation->add(
             get_string('gradingdashboard', 'local_hlai_grading'),
             new moodle_url('/local/hlai_grading/dashboard.php', ['courseid' => $course->id]),
@@ -249,7 +247,12 @@ function local_hlai_grading_coursemodule_standard_elements($formwrapper, $mform)
         'cols' => 60,
         'placeholder' => get_string('assignsettingsinstructionsplaceholder', 'local_hlai_grading'),
     ];
-    $mform->addElement('textarea', 'hlai_custominstructions', get_string('assignsettingsinstructions', 'local_hlai_grading'), $textareaoptions);
+    $mform->addElement(
+        'textarea',
+        'hlai_custominstructions',
+        get_string('assignsettingsinstructions', 'local_hlai_grading'),
+        $textareaoptions
+    );
     $mform->addHelpButton('hlai_custominstructions', 'assignsettingsinstructions', 'local_hlai_grading');
     $mform->setType('hlai_custominstructions', PARAM_RAW);
 
@@ -266,7 +269,8 @@ function local_hlai_grading_coursemodule_standard_elements($formwrapper, $mform)
         }
 
         $cm = method_exists($formwrapper, 'get_coursemodule') ? $formwrapper->get_coursemodule() : null;
-        $context = $cm ? context_module::instance($cm->id) : ($courseid ? context_course::instance($courseid) : context_system::instance());
+        $context = $cm ? context_module::instance($cm->id)
+            : ($courseid ? context_course::instance($courseid) : context_system::instance());
         $rubrics = local_hlai_grading_get_quiz_rubrics($courseid, $context);
 
         $options = [0 => get_string('quizrubric_select_none', 'local_hlai_grading')];
@@ -539,7 +543,7 @@ function local_hlai_grading_before_standard_top_of_body_html() {
         return $output;
     }
 
-    // Build the banner
+    // Build the banner.
     $html = \html_writer::start_div('ai-grading-banner-wrapper', ['id' => 'ai-grading-banner']);
     $html .= \html_writer::start_div('ai-grading-banner');
     $html .= \html_writer::start_div('ai-grading-banner__icon', ['aria-hidden' => 'true']);
@@ -854,7 +858,14 @@ function local_hlai_grading_get_quiz_rubric_json(int $rubricid): ?string {
  * @param array $items Items.
  * @return int rubric id
  */
-function local_hlai_grading_save_quiz_rubric(?int $rubricid, string $name, ?int $courseid, int $ownerid, string $visibility, array $items): int {
+function local_hlai_grading_save_quiz_rubric(
+    ?int $rubricid,
+    string $name,
+    ?int $courseid,
+    int $ownerid,
+    string $visibility,
+    array $items
+): int {
     global $DB;
 
     $now = time();

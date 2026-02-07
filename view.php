@@ -68,7 +68,10 @@ $$resolvesource = function (?string $model): string {
     if (!$model) {
         return 'unknown';
     }
-    if (strpos($model, 'proxy:') === 0 || strpos($model, 'aihub:') === 0 || strpos($model, 'gateway:') === 0 || strpos($model, 'hub:') === 0) {
+    if (
+        strpos($model, 'proxy:') === 0 || strpos($model, 'aihub:') === 0
+        || strpos($model, 'gateway:') === 0 || strpos($model, 'hub:') === 0
+    ) {
         return 'aihub';
     }
     if (strpos($model, 'keymatch:') === 0 || strpos($model, 'local:') === 0) {
@@ -130,7 +133,12 @@ if ($action === 'releaseall') {
         redirect($PAGE->url, $msg, null, \core\output\notification::NOTIFY_WARNING);
     }
 
-    redirect($PAGE->url, get_string('releaseallsuccess', 'local_hlai_grading', $released), null, \core\output\notification::NOTIFY_SUCCESS);
+    redirect(
+        $PAGE->url,
+        get_string('releaseallsuccess', 'local_hlai_grading', $released),
+        null,
+        \core\output\notification::NOTIFY_SUCCESS
+    );
 }
 
 echo $OUTPUT->header();
@@ -286,9 +294,17 @@ echo html_writer::end_tag('header');
 echo html_writer::start_div('iksha-widget__body');
 
 if (!$pending) {
-    echo html_writer::tag('p', get_string('dashboardnopending', 'local_hlai_grading'), ['class' => 'hlai-muted mb-0']);
+    echo html_writer::tag(
+        'p',
+        get_string('dashboardnopending', 'local_hlai_grading'),
+        ['class' => 'hlai-muted mb-0']
+    );
 } else {
-    echo html_writer::tag('p', get_string('dashboardpendingcount', 'local_hlai_grading', count($pending)), ['class' => 'hlai-muted']);
+    echo html_writer::tag(
+        'p',
+        get_string('dashboardpendingcount', 'local_hlai_grading', count($pending)),
+        ['class' => 'hlai-muted']
+    );
     if ($cangrade) {
         $releaseallurl = new moodle_url('/local/hlai_grading/view.php', $urlparams);
         echo html_writer::start_tag('form', [
@@ -369,12 +385,20 @@ echo html_writer::div(
 );
 echo html_writer::tag('h3', get_string('dashboardrejectedheading', 'local_hlai_grading'), ['class' => 'iksha-widget__title']);
 echo html_writer::end_div();
-echo html_writer::tag('span', number_format($rejectedcount), ['class' => 'iksha-badge iksha-badge--warning iksha-badge--sm']);
+echo html_writer::tag(
+    'span',
+    number_format($rejectedcount),
+    ['class' => 'iksha-badge iksha-badge--warning iksha-badge--sm']
+);
 echo html_writer::end_tag('header');
 echo html_writer::start_div('iksha-widget__body');
 
 if ($rejected) {
-    echo html_writer::tag('p', get_string('dashboardrejectedcount', 'local_hlai_grading', count($rejected)), ['class' => 'hlai-muted']);
+    echo html_writer::tag(
+        'p',
+        get_string('dashboardrejectedcount', 'local_hlai_grading', count($rejected)),
+        ['class' => 'hlai-muted']
+    );
 
     $returnurl = new moodle_url('/local/hlai_grading/view.php', $urlparams);
     $returnurl->set_anchor('aigrading-rejected');
@@ -445,7 +469,11 @@ if ($rejected) {
                     'class' => 'button is-light is-small',
                 ]);
             } else {
-                $manualbtn = html_writer::tag('span', get_string('manualgradingneeded', 'local_hlai_grading'), ['class' => 'hlai-muted']);
+                $manualbtn = html_writer::tag(
+                    'span',
+                    get_string('manualgradingneeded', 'local_hlai_grading'),
+                    ['class' => 'hlai-muted']
+                );
             }
             echo html_writer::tag('td', $manualbtn);
         }

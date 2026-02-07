@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Rubric_sync class.
  */
@@ -55,7 +53,7 @@ class rubric_sync {
         $gradingmanager = get_grading_manager($context, 'mod_assign', 'submissions');
         $gradingmethod = $gradingmanager->get_active_method();
 
-        // Check if using rubric or rubric_ranges
+        // Check if using rubric or rubric_ranges.
         if ($gradingmethod === 'rubric_ranges') {
             return $this->save_rubric_ranges_grades($assign, $userid, $aicriteria, $feedback);
         } else if ($gradingmethod === 'rubric') {
@@ -97,12 +95,12 @@ class rubric_sync {
 
         debugging("Rubric definition ID: {$definition->id}", DEBUG_DEVELOPER);
 
-        // Get criteria from the definition
+        // Get criteria from the definition.
         $definitioncriteria = $definition->rubric_criteria ?? [];
 
         debugging("Available rubric criteria IDs: " . implode(', ', array_keys($definitioncriteria)), DEBUG_DEVELOPER);
 
-        // Get or create grade record
+        // Get or create grade record.
         $submission = $assign->get_user_submission($userid, false);
         if (!$submission) {
             debugging("No submission found for user {$userid}", DEBUG_DEVELOPER);
@@ -115,22 +113,22 @@ class rubric_sync {
             return false;
         }
 
-        // Set grader if not set
+        // Set grader if not set.
         if (!$grade->grader) {
             $grade->grader = $USER->id;
             $assign->update_grade($grade);
         }
 
-        // Build fillings array for the controller
+        // Build fillings array for the controller.
         $fillings = ['criteria' => []];
 
-        // Match AI criteria to Moodle criteria
+        // Match AI criteria to Moodle criteria.
         foreach ($aicriteria as $aicriterion) {
             $ainame = $this->normalize_name($aicriterion['name']);
             $aiscore = (float)($aicriterion['score'] ?? 0);
             $aifeedback = $aicriterion['feedback'] ?? '';
 
-            // Find matching criterion in definition
+            // Find matching criterion in definition.
             $matchedcriterionid = null;
             foreach ($definitioncriteria as $critid => $critdata) {
                 if ($this->normalize_name($critdata['description']) === $ainame) {
@@ -149,7 +147,7 @@ class rubric_sync {
 
             debugging("Processing criterion {$matchedcriterionid}: {$criteriondef['description']}", DEBUG_DEVELOPER);
 
-            // Find matching level by score
+            // Find matching level by score.
             $matchedlevelid = null;
 
             foreach ($levels as $levelid => $level) {
@@ -161,7 +159,7 @@ class rubric_sync {
                 }
             }
 
-            // If no exact match, find closest level
+            // If no exact match, find closest level.
             if (!$matchedlevelid && !empty($levels)) {
                 $closestdiff = PHP_FLOAT_MAX;
                 foreach ($levels as $levelid => $level) {
@@ -180,7 +178,7 @@ class rubric_sync {
                 continue;
             }
 
-            // Add to fillings array in controller format
+            // Add to fillings array in controller format.
             $fillings['criteria'][$matchedcriterionid] = [
                 'levelid' => $matchedlevelid, 'remark' => $aifeedback,
             ];
@@ -237,7 +235,7 @@ class rubric_sync {
         debugging("Standard rubric definition ID: {$definition->id}", DEBUG_DEVELOPER);
         debugging("Available criteria IDs: " . implode(', ', array_keys($definition->rubric_criteria)), DEBUG_DEVELOPER);
 
-        // Get or create grade record
+        // Get or create grade record.
         $submission = $assign->get_user_submission($userid, false);
         if (!$submission) {
             debugging("No submission found for user {$userid}", DEBUG_DEVELOPER);
@@ -250,7 +248,7 @@ class rubric_sync {
             return false;
         }
 
-        // Set grader if not set
+        // Set grader if not set.
         if (!$grade->grader) {
             $grade->grader = $USER->id;
             $assign->update_grade($grade);
@@ -263,7 +261,7 @@ class rubric_sync {
             return false;
         }
 
-        // Use the controller to create/update instance properly and mark it active so Moodle can render it.
+        // Use the controller to create/update instance properly; mark it active so Moodle can render it.
         try {
             $instance = $controller->get_or_create_instance($grade->id, $grade->grader, $grade->id);
             $instance->update($fillings);
@@ -358,7 +356,7 @@ class rubric_sync {
      * @return string The string value.
      */
     protected function normalize_name(string $name): string {
-        // Trim whitespace, collapse multiple spaces, convert to lowercase
+        // Trim whitespace, collapse multiple spaces, convert to lowercase.
         $normalized = trim($name);
         $normalized = preg_replace('/\s+/', ' ', $normalized);
         $normalized = strtolower($normalized);

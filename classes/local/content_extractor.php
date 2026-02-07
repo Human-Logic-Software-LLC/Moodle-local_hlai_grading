@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Content_extractor class.
  */
@@ -74,7 +72,11 @@ class content_extractor {
                     }
                     $extracted = self::extract_file($file);
                     if (!empty($extracted['error'])) {
-                        debugging('AI document extraction warning: ' . $file->get_filename() . ' -> ' . $extracted['error'], DEBUG_DEVELOPER);
+                        debugging(
+                            'AI document extraction warning: ' . $file->get_filename()
+                                . ' -> ' . $extracted['error'],
+                            DEBUG_DEVELOPER
+                        );
                         $filelabels[] = $file->get_filename() . ' (error: ' . $extracted['error'] . ')';
                         continue;
                     }

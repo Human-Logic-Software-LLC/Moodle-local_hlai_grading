@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Dashboard_stats class.
  */
@@ -38,20 +36,20 @@ class dashboard_stats {
     public function get_admin_stats(): array {
         global $DB;
 
-        // 1. Queue Depth (Pending or Processing items)
+        // 1. Queue Depth (Pending or Processing items).
         $queuedepth = $DB->count_records_select('hlai_grading_queue', "status = 'pending' OR status = 'processing'");
 
-        // 2. Total Graded (Completed items in results)
+        // 2. Total Graded (Completed items in results).
         $totalgraded = $DB->count_records('hlai_grading_results');
 
-        // 3. Failures (Status failed or high retries)
+        // 3. Failures (Status failed or high retries).
         $failures = $DB->count_records_select('hlai_grading_queue', "status = 'failed' OR retries >= 3");
 
-        // 4. Token Usage (Sum of tokens_used)
+        // 4. Token Usage (Sum of tokens_used).
         $tokensql = "SELECT SUM(tokens_used) FROM {hlai_grading_results}";
         $totaltokens = $DB->get_field_sql($tokensql) ?: 0;
 
-        // 5. Recent Activity Graph Data (Last 7 days)
+        // 5. Recent Activity Graph Data (Last 7 days).
         $weekago = time() - (7 * 24 * 3600);
         $activitysql = "SELECT FROM_UNIXTIME(timecreated, '%Y-%m-%d') as date, COUNT(*) as count
                          FROM {hlai_grading_results}
@@ -76,14 +74,14 @@ class dashboard_stats {
             $activitydata[$date]++;
         }
 
-        // Fill in missing days
+        // Fill in missing days.
         $finalactivity = [];
         for ($i = 6; $i >= 0; $i--) {
             $d = date('Y-m-d', strtotime("-$i days"));
             $finalactivity[$d] = $activitydata[$d] ?? 0;
         }
 
-        // 6. Top Courses by Usage (Adoption)
+        // 6. Top Courses by Usage (Adoption).
         $topcoursessql = "SELECT c.shortname, COUNT(r.id) as count
                             FROM {hlai_grading_results} r
                             JOIN {hlai_grading_queue} q ON r.queueid = q.id
@@ -99,14 +97,14 @@ class dashboard_stats {
             $coursedata[] = $course->count;
         }
 
-        // 7. Estimated Efficiency (Time Saved)
+        // 7. Estimated Efficiency (Time Saved).
         // Assumption: Manual grading takes ~5 mins (300s) per item.
         // AI processing time is in DB, but "saved" is (Manual - AI).
         // Let's just say 5 mins per item for simplicity.
         $hourssaved = round(($totalgraded * 5) / 60, 1);
 
-        // 8. Teacher Trust Score (Override Rate)
-        // Compare AI grade (hlai_grading_results) vs Final Moodle Grade (assign/quiz tables)
+        // 8. Teacher Trust Score (Override Rate).
+        // Compare AI grade (hlai_grading_results) vs Final Moodle Grade (assign/quiz tables).
         // This is expensive to calc for ALL records, so let's sample or just check for drastic diffs where we can.
         // For simplicity and performance, let's look at the 'reviewed' flag if we used it to track acceptance,
         // OR better yet, query a join where final grade != ai grade.
@@ -129,12 +127,12 @@ class dashboard_stats {
         $overrides = 0;
 
         foreach ($comparisons as $row) {
-            // Normalize
+            // Normalize.
             $ainorm = ($row->maxgrade > 0) ? ($row->aigrade / $row->maxgrade) : 0;
             $finalnorm = ($row->grademax > 0) ? ($row->finalgrade / $row->grademax) :
                           (($row->maxgrade > 0) ? ($row->finalgrade / $row->maxgrade) : 0);
 
-            // If diff > 5%
+            // If diff > 5%.
             if (abs($ainorm - $finalnorm) > 0.05) {
                 $overrides++;
             }
@@ -168,23 +166,23 @@ class dashboard_stats {
     public function get_teacher_stats(int $courseid): array {
         global $DB;
 
-        // Verify course exists
+        // Verify course exists.
         if (!$DB->record_exists('course', ['id' => $courseid])) {
             return [];
         }
 
-        // 1. Items in Queue for this course
+        // 1. Items in Queue for this course.
         $queuecount = $DB->count_records('hlai_grading_queue', ['courseid' => $courseid, 'status' => 'pending']);
 
-        // 2. Graded Items for this course
-        // Need to join via queueid to get courseid context
+        // 2. Graded Items for this course.
+        // Need to join via queueid to get courseid context.
         $gradedsql = "SELECT COUNT(r.id)
                        FROM {hlai_grading_results} r
                        JOIN {hlai_grading_queue} q ON r.queueid = q.id
                        WHERE q.courseid = :courseid";
         $gradedcount = $DB->count_records_sql($gradedsql, ['courseid' => $courseid]);
 
-        // 3. Upcoming/Recent items
+        // 3. Upcoming/Recent items.
         $recentsql = "SELECT r.id, r.grade, r.timecreated, q.modulename, q.cmid
                        FROM {hlai_grading_results} r
                        JOIN {hlai_grading_queue} q ON r.queueid = q.id
@@ -199,7 +197,7 @@ class dashboard_stats {
             ];
         }
 
-        // 4. Grade Distribution (Histogram)
+        // 4. Grade Distribution (Histogram).
         $gradessql = "SELECT r.grade, r.maxgrade
                        FROM {hlai_grading_results} r
                        JOIN {hlai_grading_queue} q ON r.queueid = q.id
@@ -231,30 +229,30 @@ class dashboard_stats {
         }
         $avgscore = $scorecount ? round($totalscoresum / $scorecount, 1) : 0;
 
-        // 5. Rubric Analysis (Weakest/Strongest Criteria)
-        // Join rubric scores -> results -> queue (course)
+        // 5. Rubric Analysis (Weakest/Strongest Criteria).
+        // Join rubric scores -> results -> queue (course).
         $rubricsql = "SELECT rs.criterionname, AVG(rs.score / rs.maxscore) as avgnormscore
                        FROM {hlai_grading_rubric_scores} rs
                        JOIN {hlai_grading_results} r ON rs.resultid = r.id
                        JOIN {hlai_grading_queue} q ON r.queueid = q.id
                        WHERE q.courseid = :courseid AND rs.maxscore > 0
                        GROUP BY rs.criterionname
-                       ORDER BY avgnormscore ASC"; // Ascending: Weakest first
+                       ORDER BY avgnormscore ASC"; // Ascending: Weakest first.
 
-        $rubricstats = $DB->get_records_sql($rubricsql, ['courseid' => $courseid], 0, 5); // Bottom 5 criteria
+        $rubricstats = $DB->get_records_sql($rubricsql, ['courseid' => $courseid], 0, 5); // Bottom 5 criteria.
 
         $weakestcriteria = [];
         $weakestscores = [];
         foreach ($rubricstats as $stat) {
-             // Clean up potentially long criterion names
+             // Clean up potentially long criterion names.
              $name = \shorten_text($stat->criterionname, 30);
              $weakestcriteria[] = $name;
              $weakestscores[] = round($stat->avgnormscore * 100, 1);
         }
 
-        // 6. At-Risk Students (Recent low grades)
-        // Find students who scored < 50% on their most recent ai-graded submission
-        $riskthreshold = 50; // Configurable ideally
+        // 6. At-Risk Students (Recent low grades).
+        // Find students who scored < 50% on their most recent ai-graded submission.
+        $riskthreshold = 50; // Configurable ideally.
 
         $risksql = "SELECT r.userid, r.grade, r.maxgrade, q.modulename, r.timecreated
                      FROM {hlai_grading_results} r

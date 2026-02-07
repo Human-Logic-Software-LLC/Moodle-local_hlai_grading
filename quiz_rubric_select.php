@@ -76,7 +76,12 @@ if ($action === 'save' && data_submitted()) {
             $newid ?: null
         );
 
-        redirect($pageurl, get_string('quizrubric_select_saved', 'local_hlai_grading'), null, \core\output\notification::NOTIFY_SUCCESS);
+        redirect(
+            $pageurl,
+            get_string('quizrubric_select_saved', 'local_hlai_grading'),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
     }
 }
 

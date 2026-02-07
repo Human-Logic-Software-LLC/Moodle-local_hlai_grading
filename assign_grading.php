@@ -56,11 +56,11 @@ echo html_writer::end_div();
 echo html_writer::end_tag('header');
 echo html_writer::start_div('iksha-widget__body');
 
-// Show AI grading summary banner
+// Show AI grading summary banner.
 $renderer = $PAGE->get_renderer('local_hlai_grading');
 echo $renderer->render_ai_summary_banner($assign->get_instance()->id);
 
-// Get all submissions for this assignment
+// Get all submissions for this assignment.
 $submissions = $assign->list_participants(null, true);
 
 if (empty($submissions)) {
@@ -69,7 +69,7 @@ if (empty($submissions)) {
     echo html_writer::start_div('iksha-table-wrapper');
     echo html_writer::start_tag('table', ['class' => 'iksha-table generaltable']);
 
-    // Header
+    // Header.
     echo html_writer::start_tag('thead');
     echo html_writer::start_tag('tr');
     echo html_writer::tag('th', 'Student');
@@ -81,7 +81,7 @@ if (empty($submissions)) {
     echo html_writer::end_tag('tr');
     echo html_writer::end_tag('thead');
 
-    // Body
+    // Body.
     echo html_writer::start_tag('tbody');
 
     foreach ($submissions as $userid => $participant) {
@@ -92,10 +92,10 @@ if (empty($submissions)) {
 
         echo html_writer::start_tag('tr');
 
-        // Student name
+        // Student name.
         echo html_writer::tag('td', fullname($user));
 
-        // Submission status
+        // Submission status.
         $status = 'Not submitted';
         if ($submission) {
             $status = get_string('submissionstatus_' . $submission->status, 'assign');
@@ -105,21 +105,21 @@ if (empty($submissions)) {
         $aistatus = $renderer->render_ai_status_badge($userid, $assign->get_instance()->id);
         echo html_writer::tag('td', $aistatus);
 
-        // Current grade
+        // Current grade.
         $gradetext = '-';
         if ($grade && $grade->grade >= 0) {
             $gradetext = sprintf('%.2f / %.2f', $grade->grade, $assign->get_instance()->grade);
         }
         echo html_writer::tag('td', $gradetext);
 
-        // Last modified
+        // Last modified.
         $modified = '-';
         if ($submission && $submission->timemodified) {
             $modified = userdate($submission->timemodified);
         }
         echo html_writer::tag('td', $modified);
 
-        // Actions
+        // Actions.
         $gradeurl = new moodle_url('/mod/assign/view.php', [
             'id' => $cmid, 'action' => 'grader', 'userid' => $userid,
         ]);
@@ -133,11 +133,11 @@ if (empty($submissions)) {
     echo html_writer::end_tag('table');
     echo html_writer::end_div();
 
-    // Bulk actions
+    // Bulk actions.
     echo html_writer::start_div('mt-3');
     echo html_writer::tag('h4', 'Bulk Actions');
 
-    // Check if there are ungraded submissions
+    // Check if there are ungraded submissions.
     $ungraded = 0;
     foreach ($submissions as $userid => $participant) {
         $grade = $assign->get_user_grade($userid, false);
@@ -148,16 +148,16 @@ if (empty($submissions)) {
 
     if ($ungraded > 0) {
         echo html_writer::tag('p', sprintf('%d submissions not yet graded', $ungraded));
-        // Could add "Grade all with AI" button here if needed
+        // Could add "Grade all with AI" button here if needed.
     }
 
     echo html_writer::end_div();
 }
 
-echo html_writer::end_div(); // iksha-widget__body
-echo html_writer::end_div(); // iksha-widget
-echo html_writer::end_div(); // column
-echo html_writer::end_div(); // columns
-echo html_writer::end_div(); // local-hlai-grading
+echo html_writer::end_div(); // Iksha-widget__body.
+echo html_writer::end_div(); // Iksha-widget.
+echo html_writer::end_div(); // Column.
+echo html_writer::end_div(); // Columns.
+echo html_writer::end_div(); // Local-hlai-grading.
 
 echo $OUTPUT->footer();

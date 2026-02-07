@@ -138,9 +138,18 @@ foreach ($grouped as $attemptid => $attemptresults) {
             if (!empty($queuepayload['keytext'])) {
                 $graderkey = normalize_text_local((string)$queuepayload['keytext']);
             } else {
-                $options = $DB->get_record('qtype_essay_options', ['questionid' => $question->id], 'graderinfo,graderinfoformat', IGNORE_MISSING);
+                $options = $DB->get_record(
+                    'qtype_essay_options',
+                    ['questionid' => $question->id],
+                    'graderinfo,graderinfoformat',
+                    IGNORE_MISSING
+                );
                 if ($options && trim((string)$options->graderinfo) !== '') {
-                    $formatted = format_text((string)$options->graderinfo, (int)($options->graderinfoformat ?? FORMAT_HTML), ['context' => $context]);
+                    $formatted = format_text(
+                        (string)$options->graderinfo,
+                        (int)($options->graderinfoformat ?? FORMAT_HTML),
+                        ['context' => $context]
+                    );
                     $graderkey = normalize_text_local($formatted);
                 }
             }
@@ -181,7 +190,10 @@ foreach ($grouped as $attemptid => $attemptresults) {
                 $payload['analysis'] = $analysis;
             } else {
                 $payload = [
-                    'request' => $payload, 'analysis' => $analysis, 'resultid' => $result->id, 'provider' => $analysis['method'] ?? 'semantic',
+                    'request' => $payload,
+                    'analysis' => $analysis,
+                    'resultid' => $result->id,
+                    'provider' => $analysis['method'] ?? 'semantic',
                 ];
             }
             $queue->payload = json_encode($payload);

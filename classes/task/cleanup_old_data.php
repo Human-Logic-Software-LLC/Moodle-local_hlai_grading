@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Cleanup_old_data class.
  */

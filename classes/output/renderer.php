@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Renderer class.
  */
@@ -93,7 +91,9 @@ class renderer extends \plugin_renderer_base {
         }
 
         $info = (object) [
-            'grade' => format_float((float)$result->grade, 2), 'maxgrade' => format_float((float)$result->maxgrade, 2), 'confidence' => (int)($result->confidence ?? 0),
+            'grade' => format_float((float)$result->grade, 2),
+            'maxgrade' => format_float((float)$result->maxgrade, 2),
+            'confidence' => (int)($result->confidence ?? 0),
         ];
 
         switch ($result->status) {
@@ -144,7 +144,9 @@ class renderer extends \plugin_renderer_base {
         }
 
         $summarydata = (object)[
-            'total' => (int)$counts->total, 'pending' => (int)($counts->pending_review ?? 0), 'released' => (int)($counts->released ?? 0),
+            'total' => (int)$counts->total,
+            'pending' => (int)($counts->pending_review ?? 0),
+            'released' => (int)($counts->released ?? 0),
         ];
 
         if ($summarydata->pending === 0) {

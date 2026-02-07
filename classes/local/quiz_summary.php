@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 use local_hlai_grading\local\similarity;
 
 /**
@@ -174,7 +172,11 @@ class quiz_summary {
             $card .= \html_writer::start_div('ai-explain-summary');
             $card .= \html_writer::start_div('ai-explain-grade');
             $card .= \html_writer::tag('span', format_float((float)$summary->score, 2), ['class' => 'ai-explain-grade-value']);
-            $card .= \html_writer::tag('span', '/ ' . format_float((float)$summary->maxscore, 2), ['class' => 'ai-explain-grade-max']);
+            $card .= \html_writer::tag(
+                'span',
+                '/ ' . format_float((float)$summary->maxscore, 2),
+                ['class' => 'ai-explain-grade-max']
+            );
             $card .= \html_writer::end_div();
 
             if (!empty($summary->confidence)) {
@@ -206,7 +208,11 @@ class quiz_summary {
             }
             $card .= \html_writer::tag('ul', $items, ['class' => 'ai-explain-list']);
         } else {
-            $card .= \html_writer::tag('p', get_string('quizsummarystrengths_empty', 'local_hlai_grading'), ['class' => 'text-muted']);
+            $card .= \html_writer::tag(
+                'p',
+                get_string('quizsummarystrengths_empty', 'local_hlai_grading'),
+                ['class' => 'text-muted']
+            );
         }
         $card .= \html_writer::end_div();
 
@@ -219,7 +225,11 @@ class quiz_summary {
             }
             $card .= \html_writer::tag('ul', $items, ['class' => 'ai-explain-list improvements']);
         } else {
-            $card .= \html_writer::tag('p', get_string('quizsummaryimprovements_empty', 'local_hlai_grading'), ['class' => 'text-muted']);
+            $card .= \html_writer::tag(
+                'p',
+                get_string('quizsummaryimprovements_empty', 'local_hlai_grading'),
+                ['class' => 'text-muted']
+            );
         }
         $card .= \html_writer::end_div();
 
@@ -453,8 +463,8 @@ class quiz_summary {
         } else {
             $content = trim((string)$content);
             if ($content !== '') {
-                $content = preg_replace('/^```json\\s*/i', '', $content);
-                $content = preg_replace('/```\\s*$/', '', $content);
+                $content = preg_replace('/^\x60\x60\x60json\\s*/i', '', $content);
+                $content = preg_replace('/\x60\x60\x60\\s*$/', '', $content);
             }
             $decoded = json_decode($content ?? '', true);
         }

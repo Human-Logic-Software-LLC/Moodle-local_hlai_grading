@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core\task\scheduled_task;
 use local_hlai_grading\local\similarity;
 
@@ -60,7 +58,7 @@ class process_queue extends scheduled_task {
         $pushgrades   = (bool)get_config('local_hlai_grading', 'pushgrades');
         $pushfeedback = (bool)get_config('local_hlai_grading', 'pushfeedback');
 
-        // SPEC: Fetch pending items that are ready to run (respect nextrun for retries)
+        // SPEC: Fetch pending items that are ready to run (respect nextrun for retries).
         $now = time();
         $sql = "SELECT * FROM {hlai_grading_queue}
                 WHERE status = :status
@@ -106,7 +104,10 @@ class process_queue extends scheduled_task {
                 $question  = $payload['question'] ?? $payload['assignment'] ?? 'Grade this student submission.';
                 $student   = $payload['submissiontext'] ?? $payload['submission'] ?? $payload['content'] ?? '';
                 if (trim($student) === '') {
-                    throw new \Exception("Queue item {$item->id}: empty student submission for {$modulename} {$instanceid} (cmid {$cmid})");
+                    throw new \Exception(
+                        "Queue item {$item->id}: empty student submission" .
+                        " for {$modulename} {$instanceid} (cmid {$cmid})"
+                    );
                 }
                 $keytext = trim((string)($payload['keytext'] ?? $payload['answerkey'] ?? $payload['graderinfo'] ?? ''));
                 $custominstructions = trim((string)($activitiesettings->custominstructions ?? ''));
@@ -223,7 +224,10 @@ class process_queue extends scheduled_task {
 
                     $analysis = similarity::analyze($keytext, $student);
                     if (empty($analysis['key_terms_count'])) {
-                        throw new \Exception("Queue item {$item->id}: answer key contains no usable terms for {$modulename} {$instanceid}");
+                        throw new \Exception(
+                            "Queue item {$item->id}: answer key contains no usable terms" .
+                            " for {$modulename} {$instanceid}"
+                        );
                     }
                     $providerlabel = $analysis['method'] ?? 'keymatch';
 
@@ -238,7 +242,7 @@ class process_queue extends scheduled_task {
                     ];
                 }
 
-                // Store grading result in hlai_grading_results (draft storage)
+                // Store grading result in hlai_grading_results (draft storage).
                 $result = new \stdClass();
                 $result->queueid      = $item->id;
                 $result->modulename   = $payload['modulename'] ?? 'assign';
@@ -291,7 +295,7 @@ class process_queue extends scheduled_task {
                 $result->prompttokens = null;
                 $result->completiontokens = null;
                 $result->processing_time = null;
-                $result->status       = 'draft'; // SPEC: Start as draft
+                $result->status       = 'draft'; // SPEC: Start as draft.
                 $result->reviewed     = 0;
                 $result->reviewer_id  = null;
                 $result->timecreated  = time();
@@ -318,7 +322,7 @@ class process_queue extends scheduled_task {
                     ],
                 ])->trigger();
 
-                // Auto-release logic
+                // Auto-release logic.
                 if (!empty($activitiesettings->autorelease)) {
                     $result->id = $resultid;
                     $this->auto_release_result($result, $courseid, $ai, $pushfeedback, $context);
@@ -345,12 +349,12 @@ class process_queue extends scheduled_task {
                 }
 
                 // SPEC: Optionally push to gradebook after human review (legacy)
-                // But in strict spec mode, this should only happen on teacher release
+                // But in strict spec mode, this should only happen on teacher release.
                 if ($pushgrades && $courseid && $assignid && $userid) {
                     $this->push_grade($courseid, $assignid, $userid, $ai, $pushfeedback);
                 }
 
-                // Mark queue as done
+                // Mark queue as done.
                 $item->status  = 'done';
                 $item->timecompleted = time();
                 $item->payload = json_encode([
@@ -361,12 +365,12 @@ class process_queue extends scheduled_task {
                 ]);
                 $DB->update_record('hlai_grading_queue', $item);
 
-                // SPEC: Set workflow to 'inreview' so teacher can see it
+                // SPEC: Set workflow to 'inreview' so teacher can see it.
                 if ($assignid && $userid) {
                     \local_hlai_grading\local\workflow_manager::set_assign_state($assignid, $userid, 'inreview');
                 }
 
-                // SPEC: Log the action
+                // SPEC: Log the action.
                 \local_hlai_grading\local\workflow_manager::log_action(
                     $item->id,
                     $resultid,
@@ -375,9 +379,9 @@ class process_queue extends scheduled_task {
                     'Key-match grading completed and stored as draft'
                 );
             } catch (\Throwable $e) {
-                // SPEC: Retry logic with exponential backoff
+                // SPEC: Retry logic with exponential backoff.
                 $item->retries = ($item->retries ?? 0) + 1;
-                $maxretries = 3; // SPEC requirement
+                $maxretries = 3; // SPEC requirement.
 
                 $debuginfo = null;
                 if (method_exists($e, 'getDebugInfo')) {
@@ -396,11 +400,11 @@ class process_queue extends scheduled_task {
                 }
 
                 if ($item->retries >= $maxretries) {
-                    // Max retries reached, mark as failed
+                    // Max retries reached, mark as failed.
                     $item->status  = 'failed';
                     $errorpayload['trace'] = $e->getTraceAsString();
                 } else {
-                    // Retry with exponential backoff: 5min, 10min, 15min
+                    // Retry with exponential backoff: 5min, 10min, 15min.
                     $item->status  = 'pending';
                     $item->nextrun = time() + (300 * $item->retries); // 300s = 5 minutes
                 }
@@ -408,7 +412,7 @@ class process_queue extends scheduled_task {
                 $item->payload = json_encode($errorpayload);
                 $DB->update_record('hlai_grading_queue', $item);
 
-                // SPEC: Log failure
+                // SPEC: Log failure.
                 \local_hlai_grading\local\workflow_manager::log_action(
                     $item->id,
                     null,
@@ -442,13 +446,13 @@ class process_queue extends scheduled_task {
         if (is_string($response)) {
             $decoded = json_decode($response, true);
         } else if (is_object($response) && property_exists($response, 'content')) {
-            // AI Hub returns: {"content": "...", "provider": "...", ...}
+            // The AI Hub response object contains content and provider fields.
             $content = $response->content;
 
-            // The content might have JSON wrapped in markdown code blocks
-            // Remove ```json and ``` if present
-            $content = preg_replace('/^```json\s*/m', '', $content);
-            $content = preg_replace('/\s*```$/m', '', $content);
+            // The content might have JSON wrapped in markdown code blocks.
+            // Strip opening and closing fences if present.
+            $content = preg_replace('/^\x60\x60\x60json\s*/m', '', $content);
+            $content = preg_replace('/\s*\x60\x60\x60$/m', '', $content);
             $content = trim($content);
 
             $decoded = json_decode($content, true);
@@ -460,7 +464,7 @@ class process_queue extends scheduled_task {
             $decoded = [];
         }
 
-        // Fallbacks
+        // Fallbacks.
         $score    = $decoded['score'] ?? $decoded['grade'] ?? 0;
         $maxscore = $decoded['max_score'] ?? $decoded['maxscore'] ?? 100;
         $feedback = $decoded['feedback'] ?? $decoded['comment'] ?? '';
@@ -542,7 +546,13 @@ class process_queue extends scheduled_task {
      * @param \context $context Moodle context for event logging
      * @return void
      */
-    protected function auto_release_result(\stdClass $result, int $courseid, array $ai, bool $pushfeedback, \context $context): void {
+    protected function auto_release_result(
+        \stdClass $result,
+        int $courseid,
+        array $ai,
+        bool $pushfeedback,
+        \context $context
+    ): void {
         global $DB, $CFG;
 
         $now = time();

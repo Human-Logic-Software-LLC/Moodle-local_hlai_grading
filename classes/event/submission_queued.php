@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event triggered when a submission is queued for AI grading.
  */

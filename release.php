@@ -26,9 +26,9 @@ require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/../../mod/assign/locallib.php');
 require_once(__DIR__ . '/../../grade/grading/lib.php');
 
-$id = required_param('id', PARAM_INT); // hlai_grading_results.id
+$id = required_param('id', PARAM_INT); // Record ID from hlai_grading_results.
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
-$action = optional_param('action', 'release', PARAM_ALPHA); // release, reject, modify
+$action = optional_param('action', 'release', PARAM_ALPHA); // Release, reject, or modify.
 
 global $DB, $USER, $OUTPUT, $PAGE, $CFG;
 
@@ -36,7 +36,11 @@ $result = $DB->get_record('hlai_grading_results', ['id' => $id], '*', MUST_EXIST
 $queue  = $DB->get_record('hlai_grading_queue', ['id' => $result->queueid], '*', IGNORE_MISSING);
 if (!$queue) {
     $queue = (object)[
-        'id' => $result->queueid, 'submissionid' => $result->submissionid ?? 0, 'attemptid' => $result->attemptid ?? 0, 'questionid' => $result->questionid ?? 0, 'payload' => null,
+        'id' => $result->queueid,
+        'submissionid' => $result->submissionid ?? 0,
+        'attemptid' => $result->attemptid ?? 0,
+        'questionid' => $result->questionid ?? 0,
+        'payload' => null,
     ];
 }
 
@@ -78,7 +82,7 @@ $dashboardurl = new moodle_url('/local/hlai_grading/view.php', [
     'courseid' => $course->id, 'assignid' => $activity->id, 'module' => $modulename,
 ]);
 
-// Handle release confirmation
+// Handle release confirmation.
 if ($confirm && confirm_sesskey()) {
     $bundle = [
         'result' => $result,
@@ -121,7 +125,7 @@ if ($confirm && confirm_sesskey()) {
     }
 }
 
-// Fetch student submission content
+// Fetch student submission content.
 $submissiontext = '';
 $questiontext = '';
 $user = $DB->get_record('user', ['id' => $result->userid], '*', MUST_EXIST);
@@ -156,7 +160,11 @@ if ($assigninstance) {
             }
         }
     } catch (\Exception $e) {
-        $submissiontext = html_writer::tag('p', get_string('submissionerror', 'local_hlai_grading', $e->getMessage()), ['class' => 'text-danger']);
+        $submissiontext = html_writer::tag(
+            'p',
+            get_string('submissionerror', 'local_hlai_grading', $e->getMessage()),
+            ['class' => 'text-danger']
+        );
     }
 } else if ($modulename === 'quiz' && !empty($result->attemptid) && !empty($result->slot)) {
     try {
@@ -170,20 +178,24 @@ if ($assigninstance) {
             $submissiontext = format_text($answer, FORMAT_HTML, ['context' => $context]);
         }
     } catch (\Exception $e) {
-        $submissiontext = html_writer::tag('p', get_string('submissionerror', 'local_hlai_grading', $e->getMessage()), ['class' => 'text-danger']);
+        $submissiontext = html_writer::tag(
+            'p',
+            get_string('submissionerror', 'local_hlai_grading', $e->getMessage()),
+            ['class' => 'text-danger']
+        );
     }
 }
 
-// Display confirmation page
+// Display confirmation page.
 echo $OUTPUT->header();
 echo html_writer::start_div('local-hlai-grading local-hlai-iksha');
 
-// Show the AI grading result details
+// Show the AI grading result details.
 echo html_writer::start_div('ai-grading-review card p-3 mb-3');
 
 echo html_writer::tag('h3', get_string('aigradingreview', 'local_hlai_grading'));
 
-// User info
+// User info.
 echo html_writer::tag('p', html_writer::tag('strong', get_string('columnstudent', 'local_hlai_grading') . ': ') . fullname($user));
 
 // Question details for quizzes.
@@ -192,13 +204,13 @@ if (!empty($questiontext)) {
     echo html_writer::tag('div', $questiontext, ['class' => 'alert alert-light border']);
 }
 
-// Student submission content
+// Student submission content.
 if (!empty($submissiontext)) {
     echo html_writer::tag('h4', get_string('studentsubmission', 'local_hlai_grading'));
     echo html_writer::tag('div', $submissiontext, ['class' => 'alert alert-secondary border']);
 }
 
-// Grade info
+// Grade info.
 echo html_writer::tag('p', html_writer::tag('strong', get_string('grade') . ': ') .
     sprintf('%s / %s', number_format($result->grade, 2), number_format($result->maxgrade, 2)));
 
@@ -215,7 +227,7 @@ if (!empty($result->model)) {
     echo $modellabel;
 }
 
-// Similarity breakdown
+// Similarity breakdown.
 if (!empty($result->reasoning)) {
     echo html_writer::tag('h4', get_string('similaritybreakdown', 'local_hlai_grading'));
     echo html_writer::tag('div', nl2br(s($result->reasoning)), ['class' => 'alert alert-info']);
@@ -263,7 +275,7 @@ if (!empty($missingterms)) {
     echo html_writer::tag('ul', $items, ['class' => 'list-unstyled']);
 }
 
-// Rubric breakdown
+// Rubric breakdown.
 $rubricrendered = false;
 $decodedcriteria = [];
 if (!empty($result->rubric_analysis)) {
@@ -288,7 +300,15 @@ if ($modulename === 'assign' && $assigninstance) {
                     try {
                         require_once($CFG->dirroot . '/local/hlai_grading/classes/local/rubric_sync.php');
                         $sync = new \local_hlai_grading\local\rubric_sync();
-                        if ($sync->write_rubric($course->id, $cm->id, $result->userid, $decodedcriteria, $result->reasoning ?? '')) {
+                        if (
+                            $sync->write_rubric(
+                                $course->id,
+                                $cm->id,
+                                $result->userid,
+                                $decodedcriteria,
+                                $result->reasoning ?? ''
+                            )
+                        ) {
                             $instances = $controller->get_active_instances($grade->id);
                         }
                     } catch (\Throwable $e) {
@@ -342,10 +362,10 @@ if (!$rubricrendered && $modulename !== 'assign' && !empty($result->rubric_analy
 
 echo html_writer::end_div();
 
-// Action buttons
+// Action buttons.
 echo html_writer::start_div('ai-grading-actions');
 
-// Release button
+// Release button.
 $releaseurl = new moodle_url('/local/hlai_grading/release.php', [
     'id' => $id, 'action' => 'release', 'confirm' => 1, 'sesskey' => sesskey(),
 ]);
@@ -353,7 +373,7 @@ echo html_writer::link($releaseurl, get_string('releasegrade', 'local_hlai_gradi
     'class' => 'btn btn-success mr-2',
 ]);
 
-// Reject button
+// Reject button.
 $rejecturl = new moodle_url('/local/hlai_grading/release.php', [
     'id' => $id, 'action' => 'reject', 'confirm' => 1, 'sesskey' => sesskey(),
 ]);
@@ -361,7 +381,7 @@ echo html_writer::link($rejecturl, get_string('rejectgrade', 'local_hlai_grading
     'class' => 'btn btn-warning mr-2',
 ]);
 
-// Cancel button
+// Cancel button.
 $cancelurl = $dashboardurl ?? new moodle_url('/local/hlai_grading/view.php', ['courseid' => $course->id]);
 echo html_writer::link($cancelurl, get_string('cancel'), [
     'class' => 'btn btn-secondary',

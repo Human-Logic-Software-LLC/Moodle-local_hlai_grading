@@ -49,8 +49,8 @@ class observer {
         $data = $event->get_data();
 
         $context = $event->get_context();
-        // For module context, we need the course module ID, not instance ID
-        // context->instanceid is the CM ID for CONTEXT_MODULE
+        // For module context, we need the course module ID, not instance ID.
+        // The context->instanceid is the CM ID for CONTEXT_MODULE.
         if ($context && $context->contextlevel == CONTEXT_MODULE) {
             $cmid = $context->instanceid;
         } else {
@@ -79,7 +79,7 @@ class observer {
                     $assign = new \assign($assigncontext, $cm, null);
                     $assignmentname = $assign->get_instance()->name;
 
-                    // Get the submission
+                    // Get the submission.
                     $submission = $assign->get_user_submission($userid, false);
 
                     if ($submission) {
@@ -94,11 +94,15 @@ class observer {
                         $graderinfo = $assigninstance->gradinginstructions ?? '';
                     }
                     if ($graderinfo !== '') {
-                        $formatted = format_text($graderinfo, $assigninstance->gradinginstructionsformat ?? FORMAT_HTML, ['context' => $assigncontext]);
+                        $formatted = format_text(
+                            $graderinfo,
+                            $assigninstance->gradinginstructionsformat ?? FORMAT_HTML,
+                            ['context' => $assigncontext]
+                        );
                         $keytext = trim(strip_tags($formatted));
                     }
                 } catch (\Exception $e) {
-                    // If we can't get submission or grading key, continue anyway
+                    // If we can't get submission or grading key, continue anyway.
                     $submissiontext = '';
                     $keytext = '';
                 }
@@ -168,7 +172,7 @@ class observer {
             $payload
         );
 
-        // SPEC: Set workflow to 'inmarking' when queued for AI grading
+        // SPEC: Set workflow to 'inmarking' when queued for AI grading.
         if ($assignid && $userid) {
             \local_hlai_grading\local\workflow_manager::set_assign_state($assignid, $userid, 'inmarking');
         }
@@ -263,7 +267,9 @@ class observer {
                             $submissionfiles[] = $file->get_filename();
                             continue;
                         }
-                        $submissionfiles[] = $file->get_filename() . (!empty($extracted['error']) ? ' (error: ' . $extracted['error'] . ')' : '');
+                        $submissionfiles[] = $file->get_filename()
+                            . (!empty($extracted['error'])
+                                ? ' (error: ' . $extracted['error'] . ')' : '');
                     }
                     if (!empty($filetext)) {
                         $answer = trim(implode("\n\n", $filetext));
@@ -286,7 +292,11 @@ class observer {
             }
             $keytext = '';
             if ($graderinfo !== '') {
-                $formatted = format_text($graderinfo, $question->graderinfoformat ?? FORMAT_HTML, ['context' => \context_module::instance($cm->id)]);
+                $formatted = format_text(
+                    $graderinfo,
+                    $question->graderinfoformat ?? FORMAT_HTML,
+                    ['context' => \context_module::instance($cm->id)]
+                );
                 $keytext = trim(strip_tags($formatted));
             }
 

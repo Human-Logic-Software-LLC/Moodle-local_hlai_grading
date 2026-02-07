@@ -39,8 +39,8 @@ if ($courseid) {
     $PAGE->set_url(new moodle_url('/local/hlai_grading/dashboard.php', $urlparams));
     $PAGE->set_context($context);
 
-    // Check capability for teacher view
-    require_capability('mod/quiz:viewreports', $context); // Or mod/quiz:grade
+    // Check capability for teacher view.
+    require_capability('mod/quiz:viewreports', $context); // Or mod/quiz:grade.
     $viewtype = 'teacher';
     $title = get_string('pluginname', 'local_hlai_grading') . ': ' . $course->shortname;
 } else {
@@ -53,7 +53,7 @@ if ($courseid) {
     $PAGE->set_url(new moodle_url('/local/hlai_grading/dashboard.php', $urlparams));
     $PAGE->set_context($context);
 
-    // Check capability for admin view
+    // Check capability for admin view.
     require_capability('moodle/site:config', $context);
     $viewtype = 'admin';
     $title = get_string('pluginname', 'local_hlai_grading') . ': ' . get_string('administration');
@@ -61,7 +61,7 @@ if ($courseid) {
 
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->set_pagelayout('standard'); // Handles navigation automatically
+$PAGE->set_pagelayout('standard'); // Handles navigation automatically.
 $PAGE->requires->css('/local/hlai_grading/styles.css');
 
 $output = $PAGE->get_renderer('local_hlai_grading');

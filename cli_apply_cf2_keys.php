@@ -180,7 +180,12 @@ foreach ($slots as $slot) {
         continue;
     }
 
-    $question = $DB->get_record('question', ['id' => $version->questionid], 'id, name, qtype, questiontext, questiontextformat', IGNORE_MISSING);
+    $question = $DB->get_record(
+        'question',
+        ['id' => $version->questionid],
+        'id, name, qtype, questiontext, questiontextformat',
+        IGNORE_MISSING
+    );
     if (!$question || $question->qtype !== 'essay') {
         continue;
     }

@@ -109,7 +109,11 @@ $failed = 0;
 foreach ($missing as $essay) {
     $context = \context_system::instance();
     $qname = format_string($essay->name ?? 'Essay question');
-    $qtext = format_text((string)($essay->questiontext ?? ''), (int)($essay->questiontextformat ?? FORMAT_HTML), ['context' => $context]);
+    $qtext = format_text(
+        (string)($essay->questiontext ?? ''),
+        (int)($essay->questiontextformat ?? FORMAT_HTML),
+        ['context' => $context]
+    );
     $qtext = normalize_text_local($qtext);
     if ($qtext === '') {
         $qtext = $qname;
@@ -130,8 +134,9 @@ foreach ($missing as $essay) {
     }
 
     $content = trim((string)$content);
-    $content = preg_replace('/^```[a-z]*\s*/i', '', $content);
-    $content = preg_replace('/\s*```$/', '', $content);
+    $tick = chr(96);
+    $content = preg_replace('/^' . $tick . '{3}[a-z]*\s*/i', '', $content);
+    $content = preg_replace('/\s*' . $tick . '{3}$/', '', $content);
     $content = trim($content);
 
     if ($content === '' || $content === null) {
@@ -173,7 +178,11 @@ foreach ($pending as $item) {
     }
 
     $context = \context_system::instance();
-    $formatted = format_text((string)$options->graderinfo, (int)($options->graderinfoformat ?? FORMAT_HTML), ['context' => $context]);
+    $formatted = format_text(
+        (string)$options->graderinfo,
+        (int)($options->graderinfoformat ?? FORMAT_HTML),
+        ['context' => $context]
+    );
     $graderkey = normalize_text_local($formatted);
     if ($graderkey === '') {
         continue;

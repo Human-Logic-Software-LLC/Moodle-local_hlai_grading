@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Workflow_manager class.
  */
@@ -40,13 +38,13 @@ class workflow_manager {
     public static function set_assign_state(int $assignid, int $userid, string $state): void {
         global $DB;
 
-        // Check if assignment actually uses marking workflow
+        // Check if assignment actually uses marking workflow.
         $usesworkflow = $DB->get_field('assign', 'markingworkflow', ['id' => $assignid]);
         if (!$usesworkflow) {
             return;
         }
 
-        // assign_user_flags holds workflowstate
+        // Assign_user_flags holds workflowstate.
         $flags = $DB->get_record('assign_user_flags', ['assignment' => $assignid, 'userid' => $userid]);
         if ($flags) {
             $flags->workflowstate = $state;
@@ -75,7 +73,13 @@ class workflow_manager {
      * @param int|null $userid User performing action (0 for system)
      * @param string|null $details Additional details
      */
-    public static function log_action(int $queueid, ?int $resultid, string $action, ?int $userid = 0, ?string $details = null): void {
+    public static function log_action(
+        int $queueid,
+        ?int $resultid,
+        string $action,
+        ?int $userid = 0,
+        ?string $details = null
+    ): void {
         global $DB;
 
         $log = new \stdClass();

@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Grade_pusher class.
  */
@@ -46,7 +44,7 @@ class grade_pusher {
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
         require_once($CFG->dirroot . '/grade/grading/lib.php');
 
-        // Get the assignment
+        // Get the assignment.
         $cm = get_coursemodule_from_instance('assign', $assignid);
         if (!$cm) {
             return false;
@@ -55,25 +53,25 @@ class grade_pusher {
         $context = \context_module::instance($cm->id);
         $assign = new \assign($context, $cm, null);
 
-        // Get or create the submission grade
+        // Get or create the submission grade.
         $submission = $assign->get_user_submission($userid, false);
         if (!$submission) {
             return false;
         }
 
-        // Calculate grade scaled to assignment's grademax
+        // Calculate grade scaled to assignment's grademax.
         $grademax = (float)$assign->get_instance()->grade;
         $score = (float)($ai['score'] ?? 0);
         $maxscore = (float)($ai['max_score'] ?? 100);
 
-        // Scale AI score to assignment max
+        // Scale AI score to assignment max.
         if ($maxscore > 0) {
             $grade = ($score / $maxscore) * $grademax;
         } else {
             $grade = min($score, $grademax);
         }
 
-        // Prepare grade data
+        // Prepare grade data.
         $gradedata = new \stdClass();
         $gradedata->userid = $userid;
         $gradedata->grade = $grade;
@@ -103,14 +101,14 @@ class grade_pusher {
             }
         }
 
-        // Add feedback if enabled - must be an array with 'text' and 'format'
+        // Add feedback if enabled - must be an array with 'text' and 'format'.
         if ($pushfeedback && !empty($ai['feedback'])) {
             $gradedata->assignfeedbackcomments_editor = [
-                'text' => $ai['feedback'], 'format' => FORMAT_PLAIN, // Use plain text format
+                'text' => $ai['feedback'], 'format' => FORMAT_PLAIN, // Use plain text format.
             ];
         }
 
-        // Save the grade
+        // Save the grade.
         return $assign->save_grade($userid, $gradedata);
     }
 
@@ -141,7 +139,7 @@ class grade_pusher {
             return false;
         }
 
-        // Create grade object with just feedback, no grade change
+        // Create grade object with just feedback, no grade change.
         $gradedata = new \stdClass();
         $gradedata->userid = $userid;
         $gradedata->attemptnumber = $submission->attemptnumber;

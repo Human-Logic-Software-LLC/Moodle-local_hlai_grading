@@ -24,8 +24,6 @@
 
 namespace local_hlai_grading\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Similarity class.
  */
@@ -217,7 +215,9 @@ class similarity {
 
         $lines = [];
         $lines[] = "Key terms matched: {$analysis['matched_terms_count']} of {$analysis['key_terms_count']} ({$coverage}%).";
-        $lines[] = "Overall term overlap (Jaccard): {$jaccard}% (matched {$analysis['matched_terms_count']} of {$analysis['union_terms_count']} unique terms).";
+        $matchedcount = $analysis['matched_terms_count'];
+        $unioncount = $analysis['union_terms_count'];
+        $lines[] = "Overall term overlap (Jaccard): {$jaccard}% (matched {$matchedcount} of {$unioncount} unique terms).";
         $lines[] = "Final similarity = ({$weightcoverage}% x {$coverage}%) + ({$weightjaccard}% x {$jaccard}%) = {$final}%.";
         $lines[] = "Short words under " . self::MIN_TOKEN_LENGTH . " characters are ignored.";
 
@@ -262,9 +262,9 @@ class similarity {
         if ($content === '') {
             return null;
         }
-        $content = preg_replace('/^```json\\s*/i', '', $content);
-        $content = preg_replace('/^```\\s*/', '', $content);
-        $content = preg_replace('/\\s*```$/', '', $content);
+        $content = preg_replace('/^\x60\x60\x60json\\s*/i', '', $content);
+        $content = preg_replace('/^\x60\x60\x60\\s*/', '', $content);
+        $content = preg_replace('/\\s*\x60\x60\x60$/', '', $content);
         $decoded = json_decode($content, true);
         if (!is_array($decoded)) {
             $start = strpos($content, '{');

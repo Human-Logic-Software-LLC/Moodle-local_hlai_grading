@@ -45,7 +45,7 @@ $string['setting_antiwordpath_desc'] = 'Optional absolute path to the antiword e
 $string['setting_quality'] = 'AI grading quality';
 $string['setting_quality_desc'] = 'Site-wide processing profile applied to every AI grading request.';
 
-// Release workflow strings (SPEC requirement)
+// Release workflow strings (SPEC requirement).
 $string['releasegradedraft'] = 'Release Grade Draft';
 $string['confirmrelease'] = 'Are you sure you want to release this AI-generated grade to the student?';
 $string['released'] = 'AI grade released successfully';
@@ -243,7 +243,7 @@ $string['quizsummaryimprovements'] = 'Areas to improve';
 $string['quizsummaryimprovements_empty'] = 'Improvements will appear here when available.';
 $string['quizsummaryconfidence'] = 'Average key match: {$a}%';
 
-// Quiz rubrics (lightweight, quiz-only)
+// Quiz rubrics (lightweight, quiz-only).
 $string['quizrubrics'] = 'AI Quiz Rubrics';
 $string['quizrubric_manage'] = 'Manage AI quiz rubrics';
 $string['quizrubric_select'] = 'Select AI quiz rubric';
