@@ -52,7 +52,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
 
             // Add placeholder cell
             var $gradeCell = $row.find('td').filter(function() {
-                return $(this).text().match(/\d+\/\d+|\-/);
+                return $(this).text().match(/\d+\/\d+|-/);
             }).first();
 
             if ($gradeCell.length > 0) {

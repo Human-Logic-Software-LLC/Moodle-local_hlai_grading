@@ -83,9 +83,12 @@ define([
 
         templateData.criteria = (data.criteria || []).map((criterion, index) => {
             const id = criterion.id || index;
-            const maxpoints = typeof criterion.maxpoints !== 'undefined' && criterion.maxpoints !== null ?
-                criterion.maxpoints :
-                (typeof criterion.max_score !== 'undefined' ? criterion.max_score : '');
+            let maxpoints = '';
+            if (typeof criterion.maxpoints !== 'undefined' && criterion.maxpoints !== null) {
+                maxpoints = criterion.maxpoints;
+            } else if (typeof criterion.max_score !== 'undefined') {
+                maxpoints = criterion.max_score;
+            }
             const pointsLabel = strings.explanation_points
                 .replace('{$a->points}', formatNumber(criterion.points))
                 .replace('{$a->maxpoints}', formatNumber(maxpoints));
@@ -258,6 +261,7 @@ define([
                 panel.innerHTML = `<div class="ai-explain-loading">${strings.explanation_loading}</div>`;
                 panel.hidden = false;
 
+                // eslint-disable-next-line promise/no-nesting
                 fetchExplanation(config.submissionid)
                     .then(data => {
                         loaded = true;

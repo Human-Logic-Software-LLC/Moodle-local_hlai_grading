@@ -4,10 +4,10 @@
  * @module local_hlai_grading/iksha_charts
  */
 define(['local_hlai_grading/apexcharts_loader'], function(ApexLoader) {
-    let apex = window.ApexCharts || null;
+    let Apex = window.ApexCharts || null;
 
     const load = () => ApexLoader.load().then(library => {
-        apex = library;
+        Apex = library;
         return library;
     });
     const colors = {
@@ -63,7 +63,7 @@ define(['local_hlai_grading/apexcharts_loader'], function(ApexLoader) {
 
     const getBaseConfig = () => ({
         chart: {
-            fontFamily: '-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             toolbar: {show: false},
             animations: {enabled: true, easing: 'easeinout', speed: 400},
             dropShadow: {enabled: false},
@@ -154,15 +154,15 @@ define(['local_hlai_grading/apexcharts_loader'], function(ApexLoader) {
             healthy: colors.success,
             connected: colors.success,
             inprogress: colors.warning,
-            in_progress: colors.warning,
+            'in_progress': colors.warning,
             pending: colors.warning,
-            at_risk: colors.warning,
+            'at_risk': colors.warning,
             expiring: colors.warning,
             failed: colors.danger,
             overdue: colors.danger,
             critical: colors.danger,
             suspended: colors.danger,
-            not_started: colors.danger,
+            'not_started': colors.danger,
             notstarted: colors.danger,
             info: colors.info,
             processing: colors.info,
@@ -176,7 +176,7 @@ define(['local_hlai_grading/apexcharts_loader'], function(ApexLoader) {
     };
 
     const create = (type, selector, options) => {
-        if (!apex) {
+        if (!Apex) {
             return null;
         }
         const node = document.querySelector(selector);
@@ -197,7 +197,7 @@ define(['local_hlai_grading/apexcharts_loader'], function(ApexLoader) {
             default:
                 config = areaConfig(options);
         }
-        const chart = new apex(node, config);
+        const chart = new Apex(node, config);
         chart.render();
         return chart;
     };
