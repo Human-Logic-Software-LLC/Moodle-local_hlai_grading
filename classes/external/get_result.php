@@ -41,7 +41,6 @@ use local_hlai_grading\local\result_service;
  * REST handler for fetching a full AI result payload (Spec §9.3 GET /result/:id).
  */
 class get_result extends external_api {
-
     /**
      * Define input parameters.
      *
@@ -192,8 +191,7 @@ class get_result extends external_api {
             'strengths' => new external_multiple_structure(
                 new external_value(PARAM_TEXT, 'Strength text'),
                 'List of strengths identified by AI'
-            ),
-            'improvements' => new external_multiple_structure(
+            ), 'improvements' => new external_multiple_structure(
                 new external_value(PARAM_TEXT, 'Improvement suggestion'),
                 'List of improvement suggestions'
             ),

@@ -40,7 +40,6 @@ use local_hlai_grading\local\result_service;
  * Web service endpoints for releasing/rejecting AI grades.
  */
 class manage_grade extends external_api {
-
     /**
      * Parameters for release.
      */
@@ -88,7 +87,12 @@ class manage_grade extends external_api {
     public static function reject_parameters(): external_function_parameters {
         return new external_function_parameters([
             'resultid' => new external_value(PARAM_INT, 'AI result ID'),
-            'reason' => new external_value(PARAM_TEXT, 'Optional rejection note', \VALUE_DEFAULT, null),
+            'reason' => new external_value(
+                PARAM_TEXT,
+                'Optional rejection note',
+                \VALUE_DEFAULT,
+                null
+            ),
         ]);
     }
 
