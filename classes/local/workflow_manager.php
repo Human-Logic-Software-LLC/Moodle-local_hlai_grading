@@ -1,17 +1,38 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Workflow management utilities.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading\local;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Manages Moodle's marking workflow states for assignments
- *
- * Per spec: submitted → inmarking → inreview → released
+ * Workflow_manager class.
  */
 class workflow_manager {
 
     /**
-     * Move a user's assignment submission into a workflow state
+     * Move a user's assignment submission into a workflow state.
      *
      * @param int $assignid Assignment instance ID
      * @param int $userid User ID
@@ -47,7 +68,7 @@ class workflow_manager {
     }
 
     /**
-     * Log an action to the audit trail
+     * Log an action to the audit trail.
      *
      * @param int $queueid Queue record ID
      * @param int|null $resultid Result record ID (if exists)

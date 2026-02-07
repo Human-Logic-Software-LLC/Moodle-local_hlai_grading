@@ -1,15 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Library functions for the AI grading plugin.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Human Logic AI Grading helper functions.
- * Developed and maintained by Human Logic Software LLC.
- */
-
-/**
- * Add AI Grading link to navigation
+ * Extend the global navigation with AI grading links.
  *
- * @param global_navigation $navigation
+ * @param global_navigation $navigation The navigation object.
  */
 function local_hlai_grading_extend_navigation(global_navigation $navigation) {
     global $PAGE;
@@ -39,10 +57,10 @@ function local_hlai_grading_extend_navigation(global_navigation $navigation) {
 }
 
 /**
- * Add AI Grading to settings navigation (for teachers/admins)
+ * Add AI Grading to settings navigation (for teachers/admins).
  *
- * @param settings_navigation $settingsnav
- * @param context $context
+ * @param settings_navigation $settingsnav Settingsnav.
+ * @param context $context Context.
  */
 function local_hlai_grading_extend_settings_navigation(settings_navigation $settingsnav, context $context) {
     global $PAGE;
@@ -102,11 +120,11 @@ function local_hlai_grading_extend_settings_navigation(settings_navigation $sett
 }
 
 /**
- * Add AI Grading to course navigation
+ * Add AI Grading to course navigation.
  *
- * @param navigation_node $navigation
- * @param stdClass $course
- * @param context_course $context
+ * @param navigation_node $navigation Navigation.
+ * @param stdClass $course Course.
+ * @param context_course $context Context.
  */
 function local_hlai_grading_extend_navigation_course(navigation_node $navigation, stdClass $course, context_course $context) {
     if (has_capability('local/hlai_grading:releasegrades', $context)) {
@@ -196,8 +214,8 @@ function local_hlai_grading_before_http_headers() {
 /**
  * Add AI grading elements to assignment settings forms.
  *
- * @param moodleform_mod $formwrapper
- * @param MoodleQuickForm $mform
+ * @param moodleform_mod $formwrapper Formwrapper.
+ * @param MoodleQuickForm $mform Mform.
  */
 function local_hlai_grading_coursemodule_standard_elements($formwrapper, $mform) {
     $current = method_exists($formwrapper, 'get_current') ? $formwrapper->get_current() : null;
@@ -299,9 +317,9 @@ function local_hlai_grading_coursemodule_standard_elements($formwrapper, $mform)
 /**
  * Persist AI grading settings after the assignment form is submitted.
  *
- * @param stdClass $data
- * @param stdClass $course
- * @return stdClass
+ * @param stdClass $data Data.
+ * @param stdClass $course Course.
+ * @return stdClass The object.
  */
 function local_hlai_grading_coursemodule_edit_post_actions($data, $course) {
     global $DB;
@@ -353,7 +371,7 @@ function local_hlai_grading_coursemodule_edit_post_actions($data, $course) {
 }
 
 /**
- * Inject AI grading status into assignment grading table
+ * Inject AI grading status into assignment grading table.
  * This hook is called when rendering the assignment grading table
  *
  * @param object $data Data object with submission info
@@ -371,7 +389,7 @@ function local_hlai_grading_assign_grading_table($data) {
 }
 
 /**
- * Add AI grading summary banner to assignment grading page
+ * Add AI grading summary banner to assignment grading page.
  *
  * @param int $assignid Assignment ID
  * @return string HTML banner
@@ -384,9 +402,9 @@ function local_hlai_grading_assign_grading_summary($assignid) {
 }
 
 /**
- * Inject JavaScript into assignment pages to add AI status column
+ * Inject JavaScript into assignment pages to add AI status column.
  *
- * @param moodle_page $page
+ * @param moodle_page $page Page.
  */
 function local_hlai_grading_before_footer() {
     global $PAGE, $USER, $DB;
@@ -442,7 +460,7 @@ function local_hlai_grading_before_footer() {
 }
 
 /**
- * Inject AI grading banner at top of assignment grading pages
+ * Inject AI grading banner at top of assignment grading pages.
  * This hook adds a prominent link to view AI grading results
  *
  * @return string HTML to inject
@@ -563,8 +581,8 @@ function local_hlai_grading_before_standard_top_of_body_html() {
 /**
  * Fetch stored settings for an assignment, falling back to defaults.
  *
- * @param int $assignid
- * @return stdClass
+ * @param int $assignid Assignid.
+ * @return stdClass The object.
  */
 function local_hlai_grading_get_activity_settings(string $modulename, int $instanceid): stdClass {
     global $DB;
@@ -645,8 +663,8 @@ function local_hlai_grading_is_activity_enabled(string $modulename, int $instanc
 /**
  * Fetch quiz rubrics available for a course (plus global) filtered by capability.
  *
- * @param int $courseid
- * @param context $context
+ * @param int $courseid Courseid.
+ * @param context $context Context.
  * @return array rubric records
  */
 function local_hlai_grading_get_quiz_rubrics(int $courseid, context $context): array {
@@ -672,7 +690,7 @@ function local_hlai_grading_get_quiz_rubrics(int $courseid, context $context): a
 /**
  * Fetch quiz rubric items for a rubric id.
  *
- * @param int $rubricid
+ * @param int $rubricid Rubricid.
  * @return array item records
  */
 function local_hlai_grading_get_quiz_rubric_items(int $rubricid): array {
@@ -688,7 +706,7 @@ function local_hlai_grading_get_quiz_rubric_items(int $rubricid): array {
 /**
  * Parse rubric items from the textarea input format.
  *
- * @param string $raw
+ * @param string $raw Raw.
  * @return array{items: array, errors: array}
  */
 function local_hlai_grading_parse_quiz_rubric_items(string $raw): array {
@@ -736,8 +754,8 @@ function local_hlai_grading_parse_quiz_rubric_items(string $raw): array {
 /**
  * Format rubric items into the textarea input format.
  *
- * @param array $items
- * @return string
+ * @param array $items Items.
+ * @return string The string value.
  */
 function local_hlai_grading_format_quiz_rubric_items(array $items): string {
     $lines = [];
@@ -764,8 +782,8 @@ function local_hlai_grading_format_quiz_rubric_items(array $items): string {
 /**
  * Build a rubric JSON payload for quiz grading.
  *
- * @param int $rubricid
- * @return string|null
+ * @param int $rubricid Rubricid.
+ * @return string|null The result.
  */
 function local_hlai_grading_get_quiz_rubric_json(int $rubricid): ?string {
     global $DB;
@@ -811,12 +829,12 @@ function local_hlai_grading_get_quiz_rubric_json(int $rubricid): ?string {
 /**
  * Save a quiz rubric with its items.
  *
- * @param int|null $rubricid
- * @param string $name
- * @param int|null $courseid
- * @param int $ownerid
- * @param string $visibility
- * @param array $items
+ * @param int|null $rubricid Rubricid.
+ * @param string $name Name.
+ * @param int|null $courseid Courseid.
+ * @param int $ownerid Ownerid.
+ * @param string $visibility Visibility.
+ * @param array $items Items.
  * @return int rubric id
  */
 function local_hlai_grading_save_quiz_rubric(?int $rubricid, string $name, ?int $courseid, int $ownerid, string $visibility, array $items): int {
@@ -868,7 +886,7 @@ function local_hlai_grading_save_quiz_rubric(?int $rubricid, string $name, ?int 
 /**
  * Delete a quiz rubric and its items.
  *
- * @param int $rubricid
+ * @param int $rubricid Rubricid.
  * @return void
  */
 function local_hlai_grading_delete_quiz_rubric(int $rubricid): void {

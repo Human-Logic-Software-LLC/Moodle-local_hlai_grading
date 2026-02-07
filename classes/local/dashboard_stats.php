@@ -1,21 +1,40 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Dashboard statistics helper class.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading\local;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Data provider for the AI Grading Dashboard.
- *
- * @package    local_hlai_grading
- * @copyright  2024 Your Organization
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Dashboard_stats class.
  */
 class dashboard_stats {
 
     /**
      * Get global statistics for the admin dashboard.
      *
-     * @return array
+     * @return array The result array.
      */
     public function get_admin_stats(): array {
         global $DB;
@@ -144,8 +163,8 @@ class dashboard_stats {
     /**
      * Get course-specific statistics for the teacher dashboard.
      *
-     * @param int $courseid
-     * @return array
+     * @param int $courseid Courseid.
+     * @return array The result array.
      */
     public function get_teacher_stats(int $courseid): array {
         global $DB;
@@ -274,7 +293,7 @@ class dashboard_stats {
     /**
      * Demo statistics for the admin dashboard.
      *
-     * @return array
+     * @return array The result array.
      */
     public function get_admin_demo_stats(): array {
         $labels = $this->build_recent_date_labels(7);
@@ -334,7 +353,7 @@ class dashboard_stats {
     /**
      * Demo statistics for the teacher dashboard.
      *
-     * @return array
+     * @return array The result array.
      */
     public function get_teacher_demo_stats(): array {
         $now = time();
@@ -387,8 +406,8 @@ class dashboard_stats {
     /**
      * Build recent date labels for charts.
      *
-     * @param int $days
-     * @return array
+     * @param int $days Days.
+     * @return array The result array.
      */
     private function build_recent_date_labels(int $days): array {
         $labels = [];
@@ -401,8 +420,8 @@ class dashboard_stats {
     /**
      * Return recent system error logs for the admin dashboard.
      *
-     * @param int $limit
-     * @return array
+     * @param int $limit Limit.
+     * @return array The result array.
      */
     private function get_recent_error_logs(int $limit = 6): array {
         global $DB;

@@ -1,7 +1,56 @@
 {{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
     @template local_hlai_grading/student_explanation
 
-    Context variables supplied from grade_explanation AMD module.
+    Student-facing grade explanation template.
+
+    Context variables required for this template:
+    * gradevalue - The grade value
+    * grademax - Maximum grade
+    * hasconfidence - Whether confidence is available
+    * confidence - Confidence text
+    * hasreasoning - Whether overall reasoning is available
+    * overallheading - Heading for overall section
+    * reasoningparagraphs - Array of reasoning paragraphs
+    * strengthsheading - Heading for strengths
+    * hasstrengths - Whether strengths exist
+    * strengths - Array of strength items
+    * strengthsempty - Message when no strengths
+    * improvementsheading - Heading for improvements
+    * hasimprovements - Whether improvements exist
+    * improvements - Array of improvement items
+    * improvementsempty - Message when no improvements
+    * hascriteria - Whether criteria breakdown exists
+    * criteriaheading - Heading for criteria section
+    * expandall - Expand all button text
+    * collapseall - Collapse all button text
+    * criteria - Array of criteria objects
+    * hasexamples - Whether examples exist
+    * examplesheading - Heading for examples
+    * examples - Array of example objects
+
+    Example context (json):
+    {
+        "gradevalue": "85",
+        "grademax": "100",
+        "hasstrengths": true,
+        "strengths": ["Good structure", "Clear arguments"]
+    }
 }}
 <div class="ai-explain-summary">
     <div class="ai-explain-grade">

@@ -1,18 +1,41 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Plugin renderer class.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading\output;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Renderer for AI grading UI elements.
+ * Renderer class.
  */
 class renderer extends \plugin_renderer_base {
 
     /**
      * Render the dashboard page.
      *
-     * @param dashboard_page $page
-     * @return string
+     * @param dashboard_page $page Page.
+     * @return string The string value.
      */
     public function render_dashboard_page(dashboard_page $page) {
         $data = $page->export_for_template($this);
@@ -24,7 +47,7 @@ class renderer extends \plugin_renderer_base {
      *
      * @param int $userid User ID.
      * @param int $assignid Assignment ID.
-     * @return string
+     * @return string The string value.
      */
     public function render_ai_status_badge($userid, $assignid) {
         global $DB;
@@ -111,7 +134,7 @@ class renderer extends \plugin_renderer_base {
      * Render AI grading summary banner for an assignment.
      *
      * @param int $assignid Assignment ID.
-     * @return string
+     * @return string The string value.
      */
     public function render_ai_summary_banner($assignid) {
         global $DB;
@@ -167,10 +190,10 @@ class renderer extends \plugin_renderer_base {
     /**
      * Render AI rubric previews on the assignment view page.
      *
-     * @param \cm_info $cm
-     * @param int $courseid
+     * @param \cm_info $cm Cm.
+     * @param int $courseid Courseid.
      * @param int|null $userid Optional user filter (used for student-facing view).
-     * @return string
+     * @return string The string value.
      */
     public function render_assignment_rubric_preview(\cm_info $cm, int $courseid, ?int $userid = null): string {
         global $DB, $CFG;
@@ -334,7 +357,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * JavaScript helper to hide Moodle's default rubric block when the AI preview renders.
      *
-     * @return string
+     * @return string The string value.
      */
     private function get_rubric_hiding_script(): string {
         $js = <<<JS
@@ -359,5 +382,3 @@ JS;
         return $js;
     }
 }
-
-

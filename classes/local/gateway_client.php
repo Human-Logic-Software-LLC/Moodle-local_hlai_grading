@@ -1,10 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * AI gateway client class.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading\local;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Thin gateway client for commercial Human Logic AI routing.
+ * Gateway_client class.
  */
 class gateway_client {
     /** @var string Fixed gateway endpoint (locked by design). */
@@ -13,7 +36,7 @@ class gateway_client {
     /**
      * Return locked gateway base URL.
      *
-     * @return string
+     * @return string The string value.
      */
     public static function get_gateway_url(): string {
         $override = trim((string)getenv('HL_GATEWAY_URL'));
@@ -30,7 +53,7 @@ class gateway_client {
     /**
      * Return configured gateway key.
      *
-     * @return string
+     * @return string The string value.
      */
     public static function get_gateway_key(): string {
         return trim((string)get_config('local_hlai_grading', 'gatewaykey'));
@@ -39,7 +62,7 @@ class gateway_client {
     /**
      * Whether the gateway client is configured for processing.
      *
-     * @return bool
+     * @return bool True on success, false otherwise.
      */
     public static function is_ready(): bool {
         return self::get_gateway_key() !== '';
@@ -48,10 +71,10 @@ class gateway_client {
     /**
      * Send a grading operation payload to the gateway.
      *
-     * @param string $operation
-     * @param array $payload
-     * @param string $quality
-     * @return array{provider:string,content:mixed}
+     * @param string $operation Operation.
+     * @param array $payload Payload.
+     * @param string $quality Quality.
+     * @return array{provider:string,content:mixed} The result.
      * @throws \moodle_exception
      */
     public static function grade(string $operation, array $payload, string $quality = 'balanced'): array {

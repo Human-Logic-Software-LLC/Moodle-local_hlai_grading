@@ -1,24 +1,42 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Rubric analysis and scoring class.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Helper that snapshots Moodle rubrics for prompt building and validates AI responses.
- *
- * This consolidates rubric logic so we have a single source of truth when:
- * - building the JSON rubric we send to the LLM,
- * - mapping AI criterion scores back to the Moodle rubric structure, and
- * - logging inconsistencies to help teachers trust the output.
+ * Rubric_analyzer class.
  */
 class rubric_analyzer {
     /**
      * Check whether the activity currently uses a rubric-compatible grading method.
      *
-     * @param string $modulename
-     * @param int $instanceid
-     * @param int|null $cmid
-     * @return bool
+     * @param string $modulename Modulename.
+     * @param int $instanceid Instanceid.
+     * @param int|null $cmid Cmid.
+     * @return bool True on success, false otherwise.
      */
     public static function has_rubric(string $modulename, int $instanceid, ?int $cmid = null): bool {
         return (bool)self::get_rubric($modulename, $instanceid, $cmid);
@@ -28,9 +46,9 @@ class rubric_analyzer {
      * Fetch and normalize a rubric definition for the given activity.
      *
      * @param string $modulename Currently only 'assign' is supported.
-     * @param int $instanceid
-     * @param int|null $cmid
-     * @return array|null
+     * @param int $instanceid Instanceid.
+     * @param int|null $cmid Cmid.
+     * @return array|null The result.
      */
     public static function get_rubric(string $modulename, int $instanceid, ?int $cmid = null): ?array {
         global $CFG;
@@ -132,8 +150,8 @@ class rubric_analyzer {
     /**
      * Convert a rubric snapshot to JSON suitable for prompts.
      *
-     * @param array|null $rubric
-     * @return string|null
+     * @param array|null $rubric Rubric.
+     * @return string|null The result.
      */
     public static function rubric_to_json(?array $rubric): ?string {
         if (empty($rubric) || empty($rubric['criteria'])) {
@@ -174,7 +192,7 @@ class rubric_analyzer {
      *
      * @param array $airesponse Result from process_queue::normalize_ai_response()
      * @param array $rubric Snapshot produced by get_rubric()
-     * @return array{criteria:array,warnings:array,score:float,max_score:float,calculated_score:float}
+     * @return array{criteria:array,warnings:array,score:float,max_score:float,calculated_score:float} The result.
      */
     public static function map_scores_to_rubric(array $airesponse, array $rubric): array {
         $result = [
@@ -251,9 +269,9 @@ class rubric_analyzer {
     /**
      * Resolve the course module for an assignment.
      *
-     * @param int $instanceid
-     * @param int|null $cmid
-     * @return \stdClass|null
+     * @param int $instanceid Instanceid.
+     * @param int|null $cmid Cmid.
+     * @return \stdClass|null The object.
      */
     protected static function resolve_assign_cm(int $instanceid, ?int $cmid = null): ?\stdClass {
         if ($cmid) {
@@ -269,10 +287,10 @@ class rubric_analyzer {
     /**
      * Attempt to match an AI criterion to the Moodle rubric.
      *
-     * @param array $criterion
-     * @param array $aicriteria
-     * @param array $usedindexes
-     * @return int|null
+     * @param array $criterion Criterion.
+     * @param array $aicriteria Aicriteria.
+     * @param array $usedindexes Usedindexes.
+     * @return int|null The result.
      */
     protected static function find_matching_ai_criterion(array $criterion, array $aicriteria, array $usedindexes): ?int {
         $target = $criterion['normalized'] ?? self::normalize_name($criterion['name']);
@@ -300,8 +318,8 @@ class rubric_analyzer {
     /**
      * Clean raw text for presentation.
      *
-     * @param string|null $text
-     * @return string
+     * @param string|null $text Text.
+     * @return string The string value.
      */
     protected static function clean_label(?string $text): string {
         $text = trim((string)$text);
@@ -313,8 +331,8 @@ class rubric_analyzer {
     /**
      * Normalize a label so we can perform stable comparisons.
      *
-     * @param string $text
-     * @return string
+     * @param string $text Text.
+     * @return string The string value.
      */
     protected static function normalize_name(string $text): string {
         $text = self::clean_label($text);

@@ -1,19 +1,41 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Rubric synchronization utilities.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading\local;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Sync AI rubric results back into Moodle's rubric grading.
- * Supports both standard 'rubric' and custom 'rubric_ranges' grading methods.
+ * Rubric_sync class.
  */
 class rubric_sync {
 
     /**
      * Write AI criterion scores back into Moodle's rubric grading interface.
      *
-     * @param int   $courseid
-     * @param int   $cmid
+     * @param int   $courseid Courseid.
+     * @param int   $cmid Cmid.
      * @param int   $userid          student being graded
      * @param array $aicriteria      from AI: [{name, score, max_score, feedback}, ...]
      * @param string $feedback       overall feedback
@@ -49,11 +71,11 @@ class rubric_sync {
      * Save grades for rubric_ranges grading method (custom implementation).
      * Based on coworker's Python integration code.
      *
-     * @param \assign $assign
-     * @param int $userid
-     * @param array $aicriteria
-     * @param string $feedback
-     * @return bool
+     * @param \assign $assign Assign.
+     * @param int $userid Userid.
+     * @param array $aicriteria Aicriteria.
+     * @param string $feedback Feedback.
+     * @return bool True on success, false otherwise.
      */
     private function save_rubric_ranges_grades(\assign $assign, int $userid, array $aicriteria, string $feedback): bool {
         global $DB, $USER;
@@ -189,11 +211,11 @@ class rubric_sync {
     /**
      * Save grades for standard rubric grading method.
      *
-     * @param \assign $assign
-     * @param int $userid
-     * @param array $aicriteria
-     * @param string $feedback
-     * @return bool
+     * @param \assign $assign Assign.
+     * @param int $userid Userid.
+     * @param array $aicriteria Aicriteria.
+     * @param string $feedback Feedback.
+     * @return bool True on success, false otherwise.
      */
     private function save_standard_rubric_grades(\assign $assign, int $userid, array $aicriteria, string $feedback): bool {
         global $DB, $USER;
@@ -263,7 +285,7 @@ class rubric_sync {
      *
      * @param array $definitioncriteria Rubric definition criteria array.
      * @param array $aicriteria AI output.
-     * @return array
+     * @return array The result array.
      */
     public function map_standard_rubric_criteria(array $definitioncriteria, array $aicriteria): array {
         $fillings = ['criteria' => []];
@@ -335,8 +357,8 @@ class rubric_sync {
      * Normalize criterion names for fuzzy matching.
      * Handles extra spaces, newlines, and case differences.
      *
-     * @param string $name
-     * @return string
+     * @param string $name Name.
+     * @return string The string value.
      */
     protected function normalize_name(string $name): string {
         // Trim whitespace, collapse multiple spaces, convert to lowercase

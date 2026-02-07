@@ -1,10 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Semantic similarity analysis class.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading\local;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Similarity scoring for key-based grading.
+ * Similarity class.
  */
 class similarity {
     private const COVERAGE_WEIGHT = 0.7;
@@ -16,9 +39,9 @@ class similarity {
      *
      * Uses AI semantic scoring when available; falls back to term overlap.
      *
-     * @param string $key
-     * @param string $student
-     * @return array
+     * @param string $key Key.
+     * @param string $student Student.
+     * @return array The result array.
      */
     public static function analyze(string $key, string $student): array {
         $semantic = self::analyze_semantic($key, $student);
@@ -153,10 +176,10 @@ class similarity {
     /**
      * Format term lists for UI display.
      *
-     * @param array $terms
-     * @param string $prefix
-     * @param int $limit
-     * @return array
+     * @param array $terms Terms.
+     * @param string $prefix Prefix.
+     * @param int $limit Limit.
+     * @return array The result array.
      */
     public static function format_term_list(array $terms, string $prefix, int $limit = 12): array {
         if (empty($terms)) {
@@ -175,8 +198,8 @@ class similarity {
     /**
      * Build a human-readable similarity explanation.
      *
-     * @param array $analysis
-     * @return string
+     * @param array $analysis Analysis.
+     * @return string The string value.
      */
     private static function build_reasoning(array $analysis): string {
         if (($analysis['method'] ?? '') === 'semantic') {

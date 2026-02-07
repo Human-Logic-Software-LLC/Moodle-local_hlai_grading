@@ -1,12 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Content extraction utilities.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading\local;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Content extraction helper for AI grading.
- *
- * Mirrors the requirements in AI_Grading_Technical_Spec §15.
+ * Content_extractor class.
  */
 class content_extractor {
     /** @var bool */
@@ -20,8 +41,8 @@ class content_extractor {
     /**
      * Extract text + metadata for an assignment submission.
      *
-     * @param \assign $assign
-     * @param \stdClass $submission
+     * @param \assign $assign Assign.
+     * @param \stdClass $submission Submission.
      * @return array{text:string, files:array}
      */
     public static function extract_from_assignment(\assign $assign, \stdClass $submission): array {
@@ -80,8 +101,8 @@ class content_extractor {
     /**
      * Extract readable text from a stored file (core method used by assignment/quiz wrappers).
      *
-     * @param \stored_file $file
-     * @return array{text:string,format:string,error?:string}
+     * @param \stored_file $file File.
+     * @return array{text:string,format:string,error?:string} The result.
      */
     public static function extract_file(\stored_file $file): array {
         $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
@@ -313,5 +334,3 @@ class content_extractor {
         return self::$antiwordpath = null;
     }
 }
-
-

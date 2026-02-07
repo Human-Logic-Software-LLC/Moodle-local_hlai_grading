@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Scheduled task to process grading queue.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_hlai_grading\task;
 
 defined('MOODLE_INTERNAL') || die();
@@ -6,6 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 use core\task\scheduled_task;
 use local_hlai_grading\local\similarity;
 
+/**
+ * Process_queue class.
+ */
 class process_queue extends scheduled_task {
 
     public function get_name() {
@@ -400,8 +426,8 @@ class process_queue extends scheduled_task {
     /**
      * Try to make sense of whatever AI Hub returned.
      *
-     * @param mixed $response
-     * @return array
+     * @param mixed $response Response.
+     * @return array The result array.
      */
     protected function normalize_ai_response($response): array {
         // Hub might give us an object, array or raw JSON string.
@@ -444,11 +470,11 @@ class process_queue extends scheduled_task {
     /**
      * Push the grade into Moodle's gradebook (or use user-provided pusher).
      *
-     * @param int   $courseid
-     * @param int   $assignid
-     * @param int   $userid
-     * @param array $ai
-     * @param bool  $pushfeedback
+     * @param int   $courseid Courseid.
+     * @param int   $assignid Assignid.
+     * @param int   $userid Userid.
+     * @param array $ai Ai.
+     * @param bool  $pushfeedback Pushfeedback.
      * @return void
      */
     protected function push_grade(int $courseid, int $assignid, int $userid, array $ai, bool $pushfeedback): void {
@@ -632,9 +658,9 @@ class process_queue extends scheduled_task {
     /**
      * Normalize a string list (strengths, improvements) from AI data.
      *
-     * @param array $ai
-     * @param string $key
-     * @return array
+     * @param array $ai Ai.
+     * @param string $key Key.
+     * @return array The result array.
      */
     protected function extract_string_list(array $ai, string $key): array {
         $source = $ai[$key] ?? ($ai['raw'][$key] ?? []);
@@ -654,8 +680,8 @@ class process_queue extends scheduled_task {
     /**
      * Normalize highlighted example data if present.
      *
-     * @param array $ai
-     * @return array
+     * @param array $ai Ai.
+     * @return array The result array.
      */
     protected function extract_examples(array $ai): array {
         $source = $ai['highlighted_examples'] ?? ($ai['raw']['highlighted_examples'] ?? []);
@@ -687,8 +713,8 @@ class process_queue extends scheduled_task {
     /**
      * Encode a list to JSON or return null when empty.
      *
-     * @param array $data
-     * @return string|null
+     * @param array $data Data.
+     * @return string|null The result.
      */
     protected function encode_optional_json(array $data): ?string {
         if (empty($data)) {
@@ -700,9 +726,9 @@ class process_queue extends scheduled_task {
     /**
      * Request a rubric-aware grade from the configured gateway.
      *
-     * @param array $payload
-     * @param string $quality
-     * @return array{provider:string,content:mixed}
+     * @param array $payload Payload.
+     * @param string $quality Quality.
+     * @return array{provider:string,content:mixed} The result.
      */
     protected function request_ai_grade(array $payload, string $quality): array {
         return \local_hlai_grading\local\gateway_client::grade('grade_rubric', $payload, $quality);
@@ -711,9 +737,9 @@ class process_queue extends scheduled_task {
     /**
      * Persist per-criterion rubric scores for dashboard analytics.
      *
-     * @param int $resultid
-     * @param array $criteria
-     * @param array|null $rubricsnapshot
+     * @param int $resultid Resultid.
+     * @param array $criteria Criteria.
+     * @param array|null $rubricsnapshot Rubricsnapshot.
      * @return void
      */
     protected function store_rubric_scores(int $resultid, array $criteria, ?array $rubricsnapshot): void {
@@ -761,9 +787,9 @@ class process_queue extends scheduled_task {
     /**
      * Select the rubric level that best matches a score.
      *
-     * @param array $levels
-     * @param float $score
-     * @return array|null
+     * @param array $levels Levels.
+     * @param float $score Score.
+     * @return array|null The result.
      */
     protected function match_rubric_level(array $levels, float $score): ?array {
         if (empty($levels)) {
