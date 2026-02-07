@@ -51,6 +51,9 @@ class manage_grade extends external_api {
 
     /**
      * Release a draft AI grade.
+     *
+     * @param int $resultid The AI result ID.
+     * @return array The response array.
      */
     public static function release(int $resultid): array {
         global $USER;
@@ -98,8 +101,12 @@ class manage_grade extends external_api {
 
     /**
      * Reject an AI grade.
+     *
+     * @param int $resultid The AI result ID.
+     * @param string|null $reason Optional rejection note.
+     * @return array The response array.
      */
-    public static function reject(int $resultid, string $reason = null): array {
+    public static function reject(int $resultid, ?string $reason = null): array {
         global $USER;
 
         $params = self::validate_parameters(self::reject_parameters(), ['resultid' => $resultid, 'reason' => $reason]);

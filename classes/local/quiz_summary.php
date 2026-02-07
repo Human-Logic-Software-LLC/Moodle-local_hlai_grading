@@ -39,6 +39,12 @@ class quiz_summary {
 
     /**
      * Build or update the summary once all quiz AI results are reviewed.
+     *
+     * @param int $attemptid The quiz attempt ID.
+     * @param int $quizid The quiz ID.
+     * @param int $userid The user ID.
+     * @param string $quality The AI quality level.
+     * @return void
      */
     public static function maybe_generate_for_attempt(int $attemptid, int $quizid, int $userid, string $quality): void {
         global $DB, $CFG;
@@ -132,6 +138,10 @@ class quiz_summary {
 
     /**
      * Render the summary card for the quiz review page.
+     *
+     * @param int $attemptid The quiz attempt ID.
+     * @param \context $context The module or course context.
+     * @return string The rendered HTML string.
      */
     public static function render_summary_card(int $attemptid, \context $context): string {
         global $DB, $USER;

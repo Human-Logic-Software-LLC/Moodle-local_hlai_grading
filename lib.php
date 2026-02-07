@@ -409,7 +409,7 @@ function local_hlai_grading_assign_grading_summary($assignid) {
 /**
  * Inject JavaScript into assignment pages to add AI status column.
  *
- * @param moodle_page $page Page.
+ * @return string The HTML output.
  */
 function local_hlai_grading_before_footer() {
     global $PAGE, $USER, $DB;
@@ -594,8 +594,9 @@ function local_hlai_grading_before_standard_top_of_body_html() {
 /**
  * Fetch stored settings for an assignment, falling back to defaults.
  *
- * @param int $assignid Assignid.
- * @return stdClass The object.
+ * @param string $modulename The module name (assign or quiz).
+ * @param int $instanceid The module instance ID.
+ * @return stdClass The settings object.
  */
 function local_hlai_grading_get_activity_settings(string $modulename, int $instanceid): stdClass {
     global $DB;
@@ -626,6 +627,15 @@ function local_hlai_grading_get_activity_settings(string $modulename, int $insta
 
 /**
  * Persist activity-level AI settings.
+ *
+ * @param string $modulename The module name (assign or quiz).
+ * @param int $instanceid The module instance ID.
+ * @param int $enabled Whether AI grading is enabled.
+ * @param string $quality The AI quality level.
+ * @param string $instructions Custom grading instructions.
+ * @param int $autorelease Whether to auto-release grades.
+ * @param int|null $rubricid Optional rubric ID for quiz grading.
+ * @return void
  */
 function local_hlai_grading_save_activity_settings(
     string $modulename,
@@ -672,6 +682,10 @@ function local_hlai_grading_save_activity_settings(
 
 /**
  * Determine whether AI grading is enabled for a given activity.
+ *
+ * @param string $modulename The module name (assign or quiz).
+ * @param int $instanceid The module instance ID.
+ * @return bool True if AI grading is enabled.
  */
 function local_hlai_grading_is_activity_enabled(string $modulename, int $instanceid): bool {
     if (function_exists('hlai_gradingfields_is_enabled')) {

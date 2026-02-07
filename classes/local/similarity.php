@@ -55,6 +55,10 @@ class similarity {
 
     /**
      * Semantic similarity using gateway.
+     *
+     * @param string $key The key answer text.
+     * @param string $student The student response text.
+     * @return array The analysis result array.
      */
     private static function analyze_semantic(string $key, string $student): array {
         if (!gateway_client::is_ready()) {
@@ -127,6 +131,10 @@ class similarity {
 
     /**
      * Term overlap similarity (fallback).
+     *
+     * @param string $key The key answer text.
+     * @param string $student The student response text.
+     * @return array The analysis result array.
      */
     private static function analyze_overlap(string $key, string $student): array {
         $keyclean = self::normalize($key);
@@ -226,6 +234,9 @@ class similarity {
 
     /**
      * Normalize text to plain lower-case tokens.
+     *
+     * @param string $text The input text.
+     * @return string The normalized text.
      */
     private static function normalize(string $text): string {
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -238,6 +249,9 @@ class similarity {
 
     /**
      * Tokenize normalized text.
+     *
+     * @param string $text The normalized text.
+     * @return array The array of tokens.
      */
     private static function tokenize(string $text): array {
         if ($text === '') {
@@ -256,6 +270,9 @@ class similarity {
 
     /**
      * Decode JSON response content.
+     *
+     * @param string $content The JSON content string.
+     * @return array|null The decoded array or null on failure.
      */
     private static function decode_json_response(string $content): ?array {
         $content = trim($content);
@@ -282,6 +299,9 @@ class similarity {
 
     /**
      * Normalize a list of strings.
+     *
+     * @param mixed $items The input items to normalize.
+     * @return array The normalized list of non-empty strings.
      */
     private static function normalize_list($items): array {
         if (!is_array($items)) {

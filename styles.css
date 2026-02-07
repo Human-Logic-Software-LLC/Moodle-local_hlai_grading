@@ -18,47 +18,47 @@
     .ai-grading-review,
     .ai-banner
 ) {
-    --iksha-primary: #3B82F6;
-    --iksha-primary-light: #EFF6FF;
-    --iksha-primary-dark: #1D4ED8;
+    --iksha-primary: #3b82f6;
+    --iksha-primary-light: #eff6ff;
+    --iksha-primary-dark: #1d4ed8;
 
-    --iksha-success: #10B981;
-    --iksha-success-light: #ECFDF5;
+    --iksha-success: #10b981;
+    --iksha-success-light: #ecfdf5;
     --iksha-success-dark: #059669;
 
-    --iksha-warning: #F59E0B;
-    --iksha-warning-light: #FFFBEB;
-    --iksha-warning-dark: #D97706;
+    --iksha-warning: #f59e0b;
+    --iksha-warning-light: #fffbeb;
+    --iksha-warning-dark: #d97706;
 
-    --iksha-danger: #EF4444;
-    --iksha-danger-light: #FEF2F2;
-    --iksha-danger-dark: #DC2626;
+    --iksha-danger: #ef4444;
+    --iksha-danger-light: #fef2f2;
+    --iksha-danger-dark: #dc2626;
 
-    --iksha-info: #06B6D4;
-    --iksha-info-light: #ECFEFF;
-    --iksha-info-dark: #0891B2;
+    --iksha-info: #06b6d4;
+    --iksha-info-light: #ecfeff;
+    --iksha-info-dark: #0891b2;
 
-    --iksha-gray-50: #F8FAFC;
-    --iksha-gray-100: #F1F5F9;
-    --iksha-gray-200: #E2E8F0;
-    --iksha-gray-300: #CBD5E1;
-    --iksha-gray-400: #94A3B8;
-    --iksha-gray-500: #64748B;
+    --iksha-gray-50: #f8fafc;
+    --iksha-gray-100: #f1f5f9;
+    --iksha-gray-200: #e2e8f0;
+    --iksha-gray-300: #cbd5e1;
+    --iksha-gray-400: #94a3b8;
+    --iksha-gray-500: #64748b;
     --iksha-gray-600: #475569;
     --iksha-gray-700: #334155;
-    --iksha-gray-800: #1E293B;
-    --iksha-gray-900: #0F172A;
+    --iksha-gray-800: #1e293b;
+    --iksha-gray-900: #0f172a;
 
-    --iksha-chart-1: #3B82F6;
-    --iksha-chart-2: #10B981;
-    --iksha-chart-3: #F59E0B;
-    --iksha-chart-4: #EF4444;
-    --iksha-chart-5: #8B5CF6;
-    --iksha-chart-6: #EC4899;
-    --iksha-chart-7: #06B6D4;
-    --iksha-chart-8: #F97316;
-    --iksha-chart-9: #6366F1;
-    --iksha-chart-10: #14B8A6;
+    --iksha-chart-1: #3b82f6;
+    --iksha-chart-2: #10b981;
+    --iksha-chart-3: #f59e0b;
+    --iksha-chart-4: #ef4444;
+    --iksha-chart-5: #8b5cf6;
+    --iksha-chart-6: #ec4899;
+    --iksha-chart-7: #06b6d4;
+    --iksha-chart-8: #f97316;
+    --iksha-chart-9: #6366f1;
+    --iksha-chart-10: #14b8a6;
 
     --iksha-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --iksha-font-mono: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
@@ -1538,10 +1538,10 @@ body.drawer-open-left .ai-grading-banner {
    Rubric Preview
    ========================================= */
 .ai-rubric-preview-card {
-    background: #fff !important;
-    border: 1px solid var(--iksha-gray-200) !important;
-    border-radius: var(--iksha-radius-lg) !important;
-    box-shadow: var(--iksha-shadow-sm) !important;
+    background: #fff;
+    border: 1px solid var(--iksha-gray-200);
+    border-radius: var(--iksha-radius-lg);
+    box-shadow: var(--iksha-shadow-sm);
     width: 100%;
 }
 
@@ -1560,8 +1560,8 @@ body.drawer-open-left .ai-grading-banner {
 
 .ai-rubric-widget {
     display: contents;
-    overflow-x: visible !important;
-    overflow-y: visible !important;
+    overflow-x: visible;
+    overflow-y: visible;
     border: none;
     border-radius: 0;
     padding: 0;
