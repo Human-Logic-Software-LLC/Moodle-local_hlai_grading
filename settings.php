@@ -1,0 +1,102 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Plugin settings and admin configuration.
+ *
+ * @package    local_hlai_grading
+ * @copyright  2025 Human Logic Software LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+
+if ($hassiteconfig) {
+    $settings = new admin_settingpage('local_hlai_grading', get_string('pluginname', 'local_hlai_grading'));
+
+    $settings->add(new admin_setting_heading(
+        'local_hlai_grading/branding',
+        '',
+        get_string('branding', 'local_hlai_grading')
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'local_hlai_grading/enable',
+        get_string('setting_enable', 'local_hlai_grading'),
+        get_string('setting_enable_desc', 'local_hlai_grading'),
+        1
+    ));
+
+    $settings->add(new admin_setting_configpasswordunmask(
+        'local_hlai_grading/gatewaykey',
+        get_string('setting_gatewaykey', 'local_hlai_grading'),
+        get_string('setting_gatewaykey_desc', 'local_hlai_grading'),
+        ''
+    ));
+
+    $qualityoptions = [
+        'fast' => get_string('assignsettingsquality_fast', 'local_hlai_grading'),
+        'balanced' => get_string('assignsettingsquality_balanced', 'local_hlai_grading'),
+        'best' => get_string('assignsettingsquality_best', 'local_hlai_grading'),
+    ];
+    $settings->add(new admin_setting_configselect(
+        'local_hlai_grading/defaultquality',
+        get_string('setting_quality', 'local_hlai_grading'),
+        get_string('setting_quality_desc', 'local_hlai_grading'),
+        'balanced',
+        $qualityoptions
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'local_hlai_grading/pushgrades',
+        get_string('setting_pushgrades', 'local_hlai_grading'),
+        get_string('setting_pushgrades_desc', 'local_hlai_grading'),
+        1
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'local_hlai_grading/pushfeedback',
+        get_string('setting_pushfeedback', 'local_hlai_grading'),
+        get_string('setting_pushfeedback_desc', 'local_hlai_grading'),
+        1
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'local_hlai_grading/dataretentionmonths',
+        get_string('setting_dataretention', 'local_hlai_grading'),
+        get_string('setting_dataretention_desc', 'local_hlai_grading'),
+        24,
+        PARAM_INT
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'local_hlai_grading/antiwordpath',
+        get_string('setting_antiwordpath', 'local_hlai_grading'),
+        get_string('setting_antiwordpath_desc', 'local_hlai_grading'),
+        '',
+        PARAM_RAW_TRIMMED
+    ));
+
+    $ADMIN->add('localplugins', $settings);
+
+    $ADMIN->add('localplugins', new admin_externalpage(
+        'local_hlai_grading_runqueue',
+        get_string('runqueuepage', 'local_hlai_grading'),
+        new moodle_url('/local/hlai_grading/run_queue.php'),
+        'moodle/site:config'
+    ));
+}
