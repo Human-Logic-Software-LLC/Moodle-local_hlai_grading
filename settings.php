@@ -41,19 +41,6 @@ if ($hassiteconfig) {
         1
     ));
 
-    $gatewayurlsetting = new admin_setting_configtext(
-        'local_hlai_grading/gatewayurl',
-        get_string('setting_gatewayurl', 'local_hlai_grading'),
-        get_string('setting_gatewayurl_desc', 'local_hlai_grading'),
-        'https://ai.human-logic.com',
-        PARAM_URL
-    );
-    $gatewayurlsetting->set_locked_flag_options(
-        admin_setting_flag::ENABLED,
-        true
-    );
-    $settings->add($gatewayurlsetting);
-
     $settings->add(new admin_setting_configpasswordunmask(
         'local_hlai_grading/gatewaykey',
         get_string('setting_gatewaykey', 'local_hlai_grading'),
