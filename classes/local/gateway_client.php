@@ -29,23 +29,15 @@ namespace local_hlai_grading\local;
  */
 class gateway_client {
     /** @var string Fixed gateway endpoint (locked by design). */
-    private const FIXED_GATEWAY_URL = 'https://ai.human-logic.com';
+    private const GATEWAY_URL = 'https://ai.human-logic.com/ai';
 
     /**
-     * Return locked gateway base URL.
+     * Return the gateway base URL.
      *
-     * @return string The string value.
+     * @return string The gateway URL.
      */
     public static function get_gateway_url(): string {
-        $override = trim((string)getenv('HL_GATEWAY_URL'));
-        if ($override !== '') {
-            return $override;
-        }
-        $configured = trim((string)get_config('local_hlai_grading', 'gatewayurl'));
-        if ($configured !== '') {
-            return $configured;
-        }
-        return self::FIXED_GATEWAY_URL;
+        return self::GATEWAY_URL;
     }
 
     /**
