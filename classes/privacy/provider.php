@@ -83,6 +83,10 @@ class provider implements
             'improvements_json' => 'privacy:metadata:hlai_grading_quiz_summary:improvements',
         ]);
 
+        $collection->add_database_table('local_hlai_grading_quiz_rubric', [
+            'ownerid' => 'privacy:metadata:hlai_grading_quiz_rubric:ownerid',
+        ]);
+
         return $collection;
     }
 

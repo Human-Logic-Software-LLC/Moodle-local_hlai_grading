@@ -66,6 +66,7 @@ class get_ai_statuses extends external_api {
         $assignid = $cm->instance;
 
         $context = \context_module::instance($cm->id);
+        self::validate_context($context);
 
         if (!has_capability('mod/assign:grade', $context)) {
             $allowed = false;

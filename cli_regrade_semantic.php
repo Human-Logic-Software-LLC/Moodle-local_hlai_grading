@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/local/hlai_grading/classes/local/similarity.php')
  * @param string $text The raw text to normalize.
  * @return string The cleaned plain-text string.
  */
-function normalize_text_local(string $text): string {
+function local_hlai_grading_normalize_text(string $text): string {
     $plain = trim(strip_tags($text));
     if ($plain === '') {
         return '';
@@ -118,7 +118,7 @@ foreach ($grouped as $attemptid => $attemptresults) {
             $student = (string)$queuepayload['submissiontext'];
         }
 
-        $student = normalize_text_local($student);
+        $student = local_hlai_grading_normalize_text($student);
         if ($student === '') {
             $skipped++;
             continue;
@@ -136,11 +136,11 @@ foreach ($grouped as $attemptid => $attemptresults) {
         $graderkey = '';
         if ($graderraw !== '') {
             $formatted = format_text($graderraw, (int)$graderformat, ['context' => $context]);
-            $graderkey = normalize_text_local($formatted);
+            $graderkey = local_hlai_grading_normalize_text($formatted);
         }
         if ($graderkey === '') {
             if (!empty($queuepayload['keytext'])) {
-                $graderkey = normalize_text_local((string)$queuepayload['keytext']);
+                $graderkey = local_hlai_grading_normalize_text((string)$queuepayload['keytext']);
             } else {
                 $options = $DB->get_record(
                     'qtype_essay_options',
@@ -154,7 +154,7 @@ foreach ($grouped as $attemptid => $attemptresults) {
                         (int)($options->graderinfoformat ?? FORMAT_HTML),
                         ['context' => $context]
                     );
-                    $graderkey = normalize_text_local($formatted);
+                    $graderkey = local_hlai_grading_normalize_text($formatted);
                 }
             }
         }

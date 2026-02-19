@@ -32,7 +32,7 @@ require(__DIR__ . '/../../config.php');
  * @param string $text The raw text to normalize.
  * @return string The cleaned plain-text string.
  */
-function normalize_text_local(string $text): string {
+function local_hlai_grading_normalize_text(string $text): string {
     $plain = trim(strip_tags($text));
     if ($plain === '') {
         return '';
@@ -114,7 +114,7 @@ foreach ($missing as $essay) {
         (int)($essay->questiontextformat ?? FORMAT_HTML),
         ['context' => $context]
     );
-    $qtext = normalize_text_local($qtext);
+    $qtext = local_hlai_grading_normalize_text($qtext);
     if ($qtext === '') {
         $qtext = $qname;
     }
@@ -183,7 +183,7 @@ foreach ($pending as $item) {
         (int)($options->graderinfoformat ?? FORMAT_HTML),
         ['context' => $context]
     );
-    $graderkey = normalize_text_local($formatted);
+    $graderkey = local_hlai_grading_normalize_text($formatted);
     if ($graderkey === '') {
         continue;
     }

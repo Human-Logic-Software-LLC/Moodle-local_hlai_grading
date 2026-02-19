@@ -69,6 +69,7 @@ class get_grade_explanation extends external_api {
         $course = $DB->get_record('course', ['id' => $assign->course], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('assign', $assign->id, $assign->course, false, MUST_EXIST);
         $context = \context_module::instance($cm->id);
+        self::validate_context($context);
 
         require_course_login($course, false, $cm);
 

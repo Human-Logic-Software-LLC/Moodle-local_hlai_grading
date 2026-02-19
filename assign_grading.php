@@ -33,11 +33,12 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 $assign = new assign(context_module::instance($cm->id), $cm, $course);
 
 require_login($course, true, $cm);
+$context = context_module::instance($cm->id);
+require_capability('local/hlai_grading:viewresults', $context);
 
 $PAGE->set_url('/local/hlai_grading/assign_grading.php', ['id' => $cmid]);
 $PAGE->set_title($assign->get_instance()->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->requires->css('/local/hlai_grading/styles.css');
 
 echo $OUTPUT->header();
 
@@ -64,7 +65,7 @@ echo $renderer->render_ai_summary_banner($assign->get_instance()->id);
 $submissions = $assign->list_participants(null, true);
 
 if (empty($submissions)) {
-    echo $OUTPUT->notification('No submissions yet', 'notifymessage');
+    echo $OUTPUT->notification(get_string('nosubmissionsyet', 'assign'), 'notifymessage');
 } else {
     echo html_writer::start_div('iksha-table-wrapper');
     echo html_writer::start_tag('table', ['class' => 'iksha-table generaltable']);
@@ -72,12 +73,12 @@ if (empty($submissions)) {
     // Header.
     echo html_writer::start_tag('thead');
     echo html_writer::start_tag('tr');
-    echo html_writer::tag('th', 'Student');
-    echo html_writer::tag('th', 'Status');
-    echo html_writer::tag('th', 'AI Status');
-    echo html_writer::tag('th', 'Grade');
-    echo html_writer::tag('th', 'Last Modified');
-    echo html_writer::tag('th', 'Actions');
+    echo html_writer::tag('th', get_string('columnstudent', 'local_hlai_grading'));
+    echo html_writer::tag('th', get_string('status', 'core'));
+    echo html_writer::tag('th', get_string('summaryheading', 'local_hlai_grading'));
+    echo html_writer::tag('th', get_string('columngrade', 'local_hlai_grading'));
+    echo html_writer::tag('th', get_string('lastmodified', 'local_hlai_grading'));
+    echo html_writer::tag('th', get_string('columnactions', 'local_hlai_grading'));
     echo html_writer::end_tag('tr');
     echo html_writer::end_tag('thead');
 
@@ -96,7 +97,7 @@ if (empty($submissions)) {
         echo html_writer::tag('td', s(fullname($user)));
 
         // Submission status.
-        $status = 'Not submitted';
+        $status = get_string('nosubmission', 'local_hlai_grading');
         if ($submission) {
             $status = get_string('submissionstatus_' . $submission->status, 'assign');
         }
@@ -123,7 +124,7 @@ if (empty($submissions)) {
         $gradeurl = new moodle_url('/mod/assign/view.php', [
             'id' => $cmid, 'action' => 'grader', 'userid' => $userid,
         ]);
-        $gradelink = html_writer::link($gradeurl, 'Grade', ['class' => 'button is-light is-small']);
+        $gradelink = html_writer::link($gradeurl, get_string('grade'), ['class' => 'button is-light is-small']);
         echo html_writer::tag('td', $gradelink);
 
         echo html_writer::end_tag('tr');
@@ -135,7 +136,7 @@ if (empty($submissions)) {
 
     // Bulk actions.
     echo html_writer::start_div('mt-3');
-    echo html_writer::tag('h4', 'Bulk Actions');
+    echo html_writer::tag('h4', get_string('bulkactions', 'local_hlai_grading'));
 
     // Check if there are ungraded submissions.
     $ungraded = 0;
@@ -147,7 +148,7 @@ if (empty($submissions)) {
     }
 
     if ($ungraded > 0) {
-        echo html_writer::tag('p', sprintf('%d submissions not yet graded', $ungraded));
+        echo html_writer::tag('p', get_string('ungradedcount', 'local_hlai_grading', $ungraded));
         // Could add "Grade all with AI" button here if needed.
     }
 
