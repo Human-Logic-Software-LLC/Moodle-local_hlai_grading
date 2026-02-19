@@ -47,8 +47,6 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('quizrubrics', 'local_hlai_grading'));
 $PAGE->set_heading($course ? format_string($course->fullname) : get_string('pluginname', 'local_hlai_grading'));
-$PAGE->requires->css('/local/hlai_grading/styles.css');
-
 $errors = [];
 $confirmdelete = false;
 $existing = null;
@@ -89,7 +87,7 @@ if ($submitted) {
 
     $formdata->name = trim(optional_param('name', '', PARAM_TEXT));
     $formdata->visibility = optional_param('visibility', 'course', PARAM_ALPHA);
-    $formdata->items = optional_param('items', '', PARAM_RAW);
+    $formdata->items = optional_param('items', '', PARAM_TEXT);
 
     if ($formdata->name === '') {
         $errors[] = get_string('quizrubric_name_required', 'local_hlai_grading');

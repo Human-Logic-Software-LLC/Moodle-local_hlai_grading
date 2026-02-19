@@ -62,8 +62,6 @@ if ($courseid) {
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_pagelayout('standard'); // Handles navigation automatically.
-$PAGE->requires->css('/local/hlai_grading/styles.css');
-
 $output = $PAGE->get_renderer('local_hlai_grading');
 $page = new \local_hlai_grading\output\dashboard_page($viewtype, $courseid ?: null, $demomode);
 

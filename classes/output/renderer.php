@@ -251,7 +251,6 @@ class renderer extends \plugin_renderer_base {
 
             $instances = $controller->get_active_instances($grade->id);
             if (empty($instances)) {
-                require_once($CFG->dirroot . '/local/hlai_grading/classes/local/rubric_sync.php');
                 try {
                     $sync = new \local_hlai_grading\local\rubric_sync();
                     if ($sync->write_rubric($courseid, $cm->id, $result->userid, $criteria, $result->reasoning ?? '')) {

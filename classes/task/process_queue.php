@@ -571,7 +571,6 @@ class process_queue extends scheduled_task {
             if (!empty($ai['criteria']) && is_array($ai['criteria'])) {
                 $cm = get_coursemodule_from_instance('assign', $result->instanceid, $courseid, false, IGNORE_MISSING);
                 if ($cm) {
-                    require_once($CFG->dirroot . '/local/hlai_grading/classes/local/rubric_sync.php');
                     $sync = new \local_hlai_grading\local\rubric_sync();
                     $sync->write_rubric($courseid, $cm->id, $result->userid, $ai['criteria'], $result->reasoning ?? '');
                 }

@@ -77,7 +77,6 @@ $PAGE->set_url('/local/hlai_grading/release.php', ['id' => $id]);
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('releasegradedraft', 'local_hlai_grading'));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->requires->css('/local/hlai_grading/styles.css');
 $dashboardurl = new moodle_url('/local/hlai_grading/view.php', [
     'courseid' => $course->id, 'assignid' => $activity->id, 'module' => $modulename,
 ]);

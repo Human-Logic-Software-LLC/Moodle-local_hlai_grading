@@ -135,7 +135,6 @@ class result_service {
             }
 
             if ($pushed && !empty($rubriccriteria)) {
-                require_once($CFG->dirroot . '/local/hlai_grading/classes/local/rubric_sync.php');
                 $sync = new rubric_sync();
                 $sync->write_rubric($course->id, $cm->id, $result->userid, $rubriccriteria, $result->reasoning ?? '');
             }
@@ -172,7 +171,6 @@ class result_service {
                 assign_update_grades($instance, $result->userid);
 
                 if (!empty($rubriccriteria)) {
-                    require_once($CFG->dirroot . '/local/hlai_grading/classes/local/rubric_sync.php');
                     $sync = new rubric_sync();
                     $sync->write_rubric($course->id, $cm->id, $result->userid, $rubriccriteria, $result->reasoning ?? '');
                 }

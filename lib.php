@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Extend the global navigation with AI grading links.
  *
@@ -153,8 +155,6 @@ function local_hlai_grading_before_http_headers() {
     global $PAGE, $USER, $CFG, $DB;
 
     if (!empty($PAGE->cm) && $PAGE->cm->modname === 'assign') {
-        $PAGE->requires->css('/local/hlai_grading/styles.css');
-
         if (!isloggedin() || isguestuser()) {
             return;
         }
@@ -203,12 +203,6 @@ function local_hlai_grading_before_http_headers() {
         }
     }
 
-    if (
-        !empty($PAGE->cm) && $PAGE->cm->modname === 'quiz' && $PAGE->url &&
-        strpos($PAGE->url->get_path(), '/mod/quiz/review.php') !== false
-    ) {
-        $PAGE->requires->css('/local/hlai_grading/styles.css');
-    }
 }
 
 /**
@@ -474,7 +468,7 @@ function local_hlai_grading_before_footer() {
  * @return string HTML to inject
  */
 function local_hlai_grading_before_standard_top_of_body_html() {
-    global $PAGE, $DB, $SESSION;
+    global $PAGE, $DB;
 
     $output = '';
     $currenturl = $PAGE->url ? $PAGE->url->out_as_local_url(false) : '';
@@ -482,16 +476,17 @@ function local_hlai_grading_before_standard_top_of_body_html() {
 
     $clearreturn = optional_param('hlai_return_clear', 0, PARAM_BOOL);
     if ($clearreturn) {
-        unset($SESSION->hlai_grading_return_url);
+        set_user_preference('local_hlai_grading_return_url', '');
     }
 
     $returnurl = optional_param('hlai_return', '', PARAM_LOCALURL);
     if (!empty($returnurl)) {
-        $SESSION->hlai_grading_return_url = $returnurl;
+        set_user_preference('local_hlai_grading_return_url', $returnurl);
     }
 
-    if (!$ispluginpage && !empty($SESSION->hlai_grading_return_url)) {
-        $backurl = new moodle_url($SESSION->hlai_grading_return_url, ['hlai_return_clear' => 1]);
+    $storedreturnurl = get_user_preferences('local_hlai_grading_return_url', '');
+    if (!$ispluginpage && !empty($storedreturnurl)) {
+        $backurl = new moodle_url($storedreturnurl, ['hlai_return_clear' => 1]);
         $output .= \html_writer::start_div('alert alert-warning mb-3 ai-grading-return-banner');
         $output .= \html_writer::tag('strong', get_string('returntoreview', 'local_hlai_grading'));
         $output .= \html_writer::link($backurl, get_string('returntoreviewbutton', 'local_hlai_grading'), [

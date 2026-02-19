@@ -91,7 +91,6 @@ class grade_pusher {
                 $controller = $gradingmanager->get_controller('rubric');
                 $definition = $controller->get_definition();
                 if ($definition && !empty($definition->rubric_criteria)) {
-                    require_once($CFG->dirroot . '/local/hlai_grading/classes/local/rubric_sync.php');
                     $sync = new \local_hlai_grading\local\rubric_sync();
                     $fillings = $sync->map_standard_rubric_criteria($definition->rubric_criteria, $criterialist);
                     if (!empty($fillings['criteria'])) {
