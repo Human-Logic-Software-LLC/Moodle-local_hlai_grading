@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Extend the global navigation with AI grading links.
  *
@@ -202,7 +200,6 @@ function local_hlai_grading_before_http_headers() {
             ]);
         }
     }
-
 }
 
 /**

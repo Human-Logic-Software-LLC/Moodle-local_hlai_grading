@@ -21,6 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
+    /**
+     * Initialise AI grading status badges in the assignment grading table.
+     */
     function initAIGradingStatus() {
         // Check if we're on an assignment grading page.
         if (!$('body').hasClass('path-mod-assign')) {
