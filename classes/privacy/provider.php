@@ -87,6 +87,15 @@ class provider implements
             'ownerid' => 'privacy:metadata:hlai_grading_quiz_rubric:ownerid',
         ]);
 
+        $collection->add_external_location_link(
+            'ai.human-logic.com',
+            [
+                'userid' => 'privacy:metadata:external:userid',
+                'submissiontext' => 'privacy:metadata:external:submissiontext',
+            ],
+            'privacy:metadata:external:description'
+        );
+
         return $collection;
     }
 

@@ -284,3 +284,33 @@ $string['task_process_queue'] = 'Process AI grading queue';
 $string['ungradedcount'] = '{$a} submissions not yet graded';
 $string['unsupportedmod'] = 'Unsupported module type: {$a}';
 $string['warning_rubric_changed'] = 'Rubric definition mismatch detected';
+
+// CLI strings.
+$string['cli_courseinfo'] = 'Course: {$a->name} (ID {$a->id})';
+$string['cli_coursenotfound'] = 'Course not found: {$a}';
+$string['cli_errors'] = 'Errors: {$a}';
+$string['cli_keyfailed'] = 'Failed to generate key for question {$a->qid}: {$a->error}';
+$string['cli_keyempty'] = 'Empty key for question {$a}, skipped.';
+$string['cli_keysgenerated'] = 'Generated keys: {$a}';
+$string['cli_keysfailed'] = 'Failed keys: {$a}';
+$string['cli_missingkeys'] = 'Essay questions missing keys: {$a}';
+$string['cli_noprovider'] = 'No AI provider available (hlai_hub or hlai_hubproxy).';
+$string['cli_noquizresults'] = 'No quiz results found for quiz {$a}.';
+$string['cli_noslots'] = 'No slots found for quiz.';
+$string['cli_provider'] = 'AI provider: {$a}';
+$string['cli_queueupdated'] = 'Updated pending queue items with generated keys: {$a}';
+$string['cli_quizinfo'] = 'Quiz: {$a->name} (ID {$a->id})';
+$string['cli_quiznotfound'] = 'Quiz not found: {$a}';
+$string['cli_regraded'] = 'Regraded results: {$a}';
+$string['cli_skipped'] = 'Skipped results: {$a}';
+$string['cli_unmatchedessay'] = 'Unmatched essay questions:';
+$string['cli_unmatcheditem'] = '- Slot {$a->slot} | QID {$a->id} | {$a->name}';
+$string['cli_updatedessay'] = 'Updated essay questions: {$a}';
+
+// Privacy external data.
+$string['privacy:metadata:external:description'] = 'Submission data is sent to the Human Logic AI grading gateway for processing.';
+$string['privacy:metadata:external:submissiontext'] = 'The text of the student submission sent for AI grading.';
+$string['privacy:metadata:external:userid'] = 'The ID of the student whose submission is sent for grading.';
+
+// Plugin index page.
+$string['plugininstalledtest'] = 'AI Grading plugin installed. This page is for testing.';

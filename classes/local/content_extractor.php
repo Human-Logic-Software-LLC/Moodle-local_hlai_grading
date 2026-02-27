@@ -241,11 +241,13 @@ class content_extractor {
         $antiword = self::get_antiword_path();
         if ($antiword) {
             $temppath = self::copy_to_temp($file, '.doc');
-            $command = escapeshellcmd($antiword) . ' ' . escapeshellarg($temppath);
-            $output = shell_exec($command);
+            $command = escapeshellarg($antiword) . ' ' . escapeshellarg($temppath);
+            $outputlines = [];
+            $returncode = -1;
+            exec($command, $outputlines, $returncode);
             @unlink($temppath);
-            if (!empty($output)) {
-                return self::clean_text($output);
+            if ($returncode === 0 && !empty($outputlines)) {
+                return self::clean_text(implode("\n", $outputlines));
             }
         }
 

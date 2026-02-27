@@ -87,12 +87,16 @@ class quiz_summary {
         $results = [];
         $resultsbyslot = [];
         if (!empty($essayslots)) {
-            $results = $DB->get_records('local_hlai_grading_results', [
+            $rs = $DB->get_recordset('local_hlai_grading_results', [
                 'modulename' => 'quiz', 'attemptid' => $attemptid,
             ], 'timecreated ASC');
+            foreach ($rs as $result) {
+                $results[$result->id] = $result;
+                $resultsbyslot[(int)$result->slot] = $result;
+            }
+            $rs->close();
 
             foreach ($results as $result) {
-                $resultsbyslot[(int)$result->slot] = $result;
                 if ($result->status === 'draft') {
                     return;
                 }
@@ -350,9 +354,25 @@ class quiz_summary {
         $weighted = 0.0;
         $weighttotal = 0.0;
 
+        // Pre-fetch all queue payloads in a single query to avoid N+1.
+        $queueids = array_filter(array_unique(array_map(function($r) {
+            return $r->queueid ?? 0;
+        }, $results)));
+        $queuemap = [];
+        if (!empty($queueids)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($queueids, SQL_PARAMS_NAMED);
+            $queuemap = $DB->get_records_select(
+                'local_hlai_grading_queue',
+                "id {$insql}",
+                $inparams,
+                '',
+                'id, payload'
+            );
+        }
+
         $index = 1;
         foreach ($results as $result) {
-            $queue = $DB->get_record('local_hlai_grading_queue', ['id' => $result->queueid], 'payload', IGNORE_MISSING);
+            $queue = $queuemap[$result->queueid] ?? null;
             $payload = self::decode_payload($queue ? ($queue->payload ?? null) : null);
             $request = $payload['request'];
             $analysis = $payload['analysis'];

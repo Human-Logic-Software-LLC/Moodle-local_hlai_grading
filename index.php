@@ -35,5 +35,5 @@ $PAGE->set_heading(get_string('pluginname', 'local_hlai_grading'));
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'local_hlai_grading'));
-echo $OUTPUT->notification('AI Grading plugin installed. This page is for testing.', 'notifysuccess');
+echo $OUTPUT->notification(get_string('plugininstalledtest', 'local_hlai_grading'), 'notifysuccess');
 echo $OUTPUT->footer();

@@ -48,7 +48,7 @@ function local_hlai_grading_normalize_text(string $text): string {
  * @param string $prompt The prompt to send to the AI provider.
  * @return string|null The generated key text, or null if no provider is available.
  */
-function ai_generate_key(string $prompt): ?string {
+function local_hlai_grading_ai_generate_key(string $prompt): ?string {
     if (class_exists('\\\\local_hlai_hub\\\\api')) {
         if (\local_hlai_hub\api::is_ready()) {
             $response = \local_hlai_hub\api::generate('local_hlai_grading', 'quiz_essay_key', $prompt, [
@@ -87,11 +87,11 @@ if (class_exists('\\\\local_hlai_hub\\\\api') && \local_hlai_hub\api::is_ready()
 }
 
 if ($provider === 'none') {
-    echo "No AI provider available (hlai_hub or hlai_hubproxy).\n";
+    mtrace(get_string('cli_noprovider', 'local_hlai_grading'));
     exit(1);
 }
 
-echo "AI provider: {$provider}\n";
+mtrace(get_string('cli_provider', 'local_hlai_grading', $provider));
 
 $missing = $DB->get_records_sql(
     "SELECT qo.id, qo.questionid, qo.graderinfo, qo.graderinfoformat,
@@ -101,7 +101,7 @@ $missing = $DB->get_records_sql(
       WHERE (qo.graderinfo IS NULL OR qo.graderinfo = '')"
 );
 
-echo "Essay questions missing keys: " . count($missing) . "\n";
+mtrace(get_string('cli_missingkeys', 'local_hlai_grading', count($missing)));
 
 $generated = 0;
 $failed = 0;
@@ -126,9 +126,9 @@ foreach ($missing as $essay) {
     $prompt .= "Question text: {$qtext}\n";
 
     try {
-        $content = ai_generate_key($prompt);
+        $content = local_hlai_grading_ai_generate_key($prompt);
     } catch (Throwable $e) {
-        echo "Failed to generate key for question {$essay->questionid}: {$e->getMessage()}\n";
+        mtrace(get_string('cli_keyfailed', 'local_hlai_grading', (object)['qid' => $essay->questionid, 'error' => $e->getMessage()]));
         $failed++;
         continue;
     }
@@ -140,7 +140,7 @@ foreach ($missing as $essay) {
     $content = trim($content);
 
     if ($content === '' || $content === null) {
-        echo "Empty key for question {$essay->questionid}, skipped.\n";
+        mtrace(get_string('cli_keyempty', 'local_hlai_grading', $essay->questionid));
         $failed++;
         continue;
     }
@@ -152,8 +152,8 @@ foreach ($missing as $essay) {
     $generated++;
 }
 
-echo "Generated keys: {$generated}\n";
-echo "Failed keys: {$failed}\n";
+mtrace(get_string('cli_keysgenerated', 'local_hlai_grading', $generated));
+mtrace(get_string('cli_keysfailed', 'local_hlai_grading', $failed));
 
 $pending = $DB->get_records('local_hlai_grading_queue', ['status' => 'pending', 'component' => 'mod_quiz']);
 $updated = 0;
@@ -194,4 +194,4 @@ foreach ($pending as $item) {
     $updated++;
 }
 
-echo "Updated pending queue items with generated keys: {$updated}\n";
+mtrace(get_string('cli_queueupdated', 'local_hlai_grading', $updated));

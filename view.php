@@ -96,10 +96,10 @@ if ($action === 'releaseall') {
           FROM {local_hlai_grading_results} r
           JOIN {course_modules} cm ON cm.instance = r.instanceid
           JOIN {modules} m ON m.id = cm.module AND m.name = r.modulename
-         WHERE r.status = 'draft'
+         WHERE r.status = :draftstatus
            AND {$wheresql}
       ORDER BY r.timecreated ASC
-    ", $baseparams);
+    ", array_merge($baseparams, ['draftstatus' => 'draft']));
 
     if (!$drafts) {
         redirect($PAGE->url, get_string('releaseallnone', 'local_hlai_grading'), null, \core\output\notification::NOTIFY_INFO);
@@ -186,10 +186,10 @@ $pending = $DB->get_records_sql("
       {$studentfieldssql->joins}
       JOIN {course_modules} cm ON cm.instance = r.instanceid
       JOIN {modules} m ON m.id = cm.module AND m.name = r.modulename
-     WHERE r.status = 'draft'
+     WHERE r.status = :pendingstatus
        AND {$wheresql}
   ORDER BY r.timecreated DESC
-", $pendingparams);
+", array_merge($pendingparams, ['pendingstatus' => 'draft']));
 
 $rejectedparams = array_merge($baseparams, $studentfieldssql->params);
 $rejected = $DB->get_records_sql("
@@ -202,10 +202,10 @@ $rejected = $DB->get_records_sql("
       {$studentfieldssql->joins}
       JOIN {course_modules} cm ON cm.instance = r.instanceid
       JOIN {modules} m ON m.id = cm.module AND m.name = r.modulename
-     WHERE r.status = 'rejected'
+     WHERE r.status = :rejectedstatus
        AND {$wheresql}
   ORDER BY r.timereviewed DESC, r.timecreated DESC
-", $rejectedparams);
+", array_merge($rejectedparams, ['rejectedstatus' => 'rejected']));
 
 $reviewerfields = \core_user\fields::for_name();
 $reviewerfieldslist = $reviewerfields->get_required_fields();
@@ -225,10 +225,10 @@ $released = $DB->get_records_sql("
       JOIN {modules} m ON m.id = cm.module AND m.name = r.modulename
  LEFT JOIN {user} rev ON rev.id = r.reviewer_id
      {$reviewerfieldssql->joins}
-     WHERE r.status = 'released'
+     WHERE r.status = :releasedstatus
        AND {$wheresql}
   ORDER BY r.timereviewed DESC
-    ", $releasedparams, 0, 50);
+    ", array_merge($releasedparams, ['releasedstatus' => 'released']), 0, 50);
 
 // Summary counts for KPI cards.
 $countsql = "

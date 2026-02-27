@@ -44,21 +44,22 @@ function local_hlai_grading_normalize_text(string $text): string {
 
 global $DB;
 
-$course = $DB->get_record('course', ['fullname' => 'Ranged Rubric Course'], 'id, fullname', IGNORE_MISSING);
+$coursefullname = 'Ranged Rubric Course';
+$course = $DB->get_record('course', ['fullname' => $coursefullname], 'id, fullname', IGNORE_MISSING);
 if (!$course) {
-    echo "Course not found: Ranged Rubric Course\n";
+    mtrace(get_string('cli_coursenotfound', 'local_hlai_grading', $coursefullname));
     exit(1);
 }
 
 $quizname = 'ASSESSMENT TITLE: CF2 Theory Assessment V 1';
 $quiz = $DB->get_record('quiz', ['course' => $course->id, 'name' => $quizname], 'id, name', IGNORE_MISSING);
 if (!$quiz) {
-    echo "Quiz not found: {$quizname}\n";
+    mtrace(get_string('cli_quiznotfound', 'local_hlai_grading', $quizname));
     exit(1);
 }
 
-echo "Course: {$course->fullname} (ID {$course->id})\n";
-echo "Quiz: {$quiz->name} (ID {$quiz->id})\n";
+mtrace(get_string('cli_courseinfo', 'local_hlai_grading', (object)['name' => $course->fullname, 'id' => $course->id]));
+mtrace(get_string('cli_quizinfo', 'local_hlai_grading', (object)['name' => $quiz->name, 'id' => $quiz->id]));
 
 $keymap = [
     [
@@ -154,7 +155,7 @@ $keymap = [
 
 $slots = $DB->get_records('quiz_slots', ['quizid' => $quiz->id], 'slot ASC');
 if (!$slots) {
-    echo "No slots found for quiz.\n";
+    mtrace(get_string('cli_noslots', 'local_hlai_grading'));
     exit(1);
 }
 
@@ -222,12 +223,11 @@ foreach ($slots as $slot) {
     $updated++;
 }
 
-echo "Updated essay questions: {$updated}\n";
+mtrace(get_string('cli_updatedessay', 'local_hlai_grading', $updated));
 if (!empty($unmatched)) {
-    echo "Unmatched essay questions:\n";
+    mtrace(get_string('cli_unmatchedessay', 'local_hlai_grading'));
     foreach ($unmatched as $item) {
-        echo "- Slot {$item->slot} | QID {$item->id} | {$item->name}\n";
-        echo "  {$item->text}\n";
+        mtrace(get_string('cli_unmatcheditem', 'local_hlai_grading', (object)['slot' => $item->slot, 'id' => $item->id, 'name' => $item->name]));
     }
 }
 
@@ -260,4 +260,4 @@ foreach ($pending as $item) {
     $payloadupdated++;
 }
 
-echo "Updated pending queue items with keys: {$payloadupdated}\n";
+mtrace(get_string('cli_queueupdated', 'local_hlai_grading', $payloadupdated));

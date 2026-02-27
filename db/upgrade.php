@@ -224,8 +224,8 @@ function xmldb_local_hlai_grading_upgrade($oldversion) {
 
         // Migrate existing assignment settings if old table exists.
         if ($dbman->table_exists('local_hlai_grading_act_settings')) {
-            $records = $DB->get_records('local_hlai_grading_act_settings');
-            foreach ($records as $record) {
+            $rs = $DB->get_recordset('local_hlai_grading_act_settings');
+            foreach ($rs as $record) {
                 $new = new \stdClass();
                 $new->modulename = 'assign';
                 $new->instanceid = $record->assignid;
@@ -237,6 +237,7 @@ function xmldb_local_hlai_grading_upgrade($oldversion) {
                 $new->timemodified = $record->timemodified;
                 $DB->insert_record('local_hlai_grading_activity_settings', $new);
             }
+            $rs->close();
 
             $oldtable = new xmldb_table('local_hlai_grading_assign_settings');
             if ($dbman->table_exists($oldtable)) {

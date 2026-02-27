@@ -254,26 +254,38 @@ class dashboard_stats {
         // Find students who scored < 50% on their most recent ai-graded submission.
         $riskthreshold = 50; // Configurable ideally.
 
-        $risksql = "SELECT r.userid, r.grade, r.maxgrade, q.modulename, r.timecreated
+        $userfields = \core_user\fields::for_name();
+        $userfieldssql = $userfields->get_sql('u', false, 'student');
+
+        $risksql = "SELECT r.id, r.userid, r.grade, r.maxgrade, q.modulename, r.timecreated
+                           {$userfieldssql->selects}
                      FROM {local_hlai_grading_results} r
                      JOIN {local_hlai_grading_queue} q ON r.queueid = q.id
+                     JOIN {user} u ON u.id = r.userid
+                     {$userfieldssql->joins}
                      WHERE q.courseid = :courseid
                        AND r.grade IS NOT NULL
                        AND r.maxgrade > 0
                        AND (r.grade / r.maxgrade) * 100 < :threshold
                      ORDER BY r.timecreated DESC";
 
-        $riskyitems = $DB->get_records_sql($risksql, ['courseid' => $courseid, 'threshold' => $riskthreshold], 0, 5);
+        $riskparams = array_merge(['courseid' => $courseid, 'threshold' => $riskthreshold], $userfieldssql->params);
+        $riskyitems = $DB->get_records_sql($risksql, $riskparams, 0, 5);
 
         $atrisklist = [];
+        $userfieldlist = $userfields->get_required_fields();
         foreach ($riskyitems as $item) {
-            $user = $DB->get_record('user', ['id' => $item->userid], 'id, firstname, lastname');
-            if ($user) {
-                 $percentage = ($item->grade / $item->maxgrade) * 100;
-                 $atrisklist[] = [
-                     'student' => fullname($user), 'task' => $item->modulename, 'score' => round($percentage, 1) . '%',
-                 ];
+            $user = (object)['id' => $item->userid];
+            foreach ($userfieldlist as $fieldname) {
+                $prop = 'student' . $fieldname;
+                if (property_exists($item, $prop)) {
+                    $user->$fieldname = $item->$prop;
+                }
             }
+            $percentage = ($item->grade / $item->maxgrade) * 100;
+            $atrisklist[] = [
+                'student' => fullname($user), 'task' => $item->modulename, 'score' => round($percentage, 1) . '%',
+            ];
         }
 
         return [

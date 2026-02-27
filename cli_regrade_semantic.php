@@ -54,7 +54,7 @@ $results = $DB->get_records(
     'attemptid ASC, slot ASC'
 );
 if (!$results) {
-    echo "No quiz results found for quiz {$quizid}.\n";
+    mtrace(get_string('cli_noquizresults', 'local_hlai_grading', $quizid));
     exit(0);
 }
 
@@ -206,6 +206,6 @@ foreach ($grouped as $attemptid => $attemptresults) {
     }
 }
 
-echo "Regraded results: {$updated}\n";
-echo "Skipped results: {$skipped}\n";
-echo "Errors: {$errors}\n";
+mtrace(get_string('cli_regraded', 'local_hlai_grading', $updated));
+mtrace(get_string('cli_skipped', 'local_hlai_grading', $skipped));
+mtrace(get_string('cli_errors', 'local_hlai_grading', $errors));
