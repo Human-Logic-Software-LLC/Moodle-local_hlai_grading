@@ -355,7 +355,7 @@ class quiz_summary {
         $weighttotal = 0.0;
 
         // Pre-fetch all queue payloads in a single query to avoid N+1.
-        $queueids = array_filter(array_unique(array_map(function($r) {
+        $queueids = array_filter(array_unique(array_map(function ($r) {
             return $r->queueid ?? 0;
         }, $results)));
         $queuemap = [];

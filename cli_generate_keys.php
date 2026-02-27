@@ -128,7 +128,8 @@ foreach ($missing as $essay) {
     try {
         $content = local_hlai_grading_ai_generate_key($prompt);
     } catch (Throwable $e) {
-        mtrace(get_string('cli_keyfailed', 'local_hlai_grading', (object)['qid' => $essay->questionid, 'error' => $e->getMessage()]));
+        $faildata = (object)['qid' => $essay->questionid, 'error' => $e->getMessage()];
+        mtrace(get_string('cli_keyfailed', 'local_hlai_grading', $faildata));
         $failed++;
         continue;
     }

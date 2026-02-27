@@ -227,7 +227,8 @@ mtrace(get_string('cli_updatedessay', 'local_hlai_grading', $updated));
 if (!empty($unmatched)) {
     mtrace(get_string('cli_unmatchedessay', 'local_hlai_grading'));
     foreach ($unmatched as $item) {
-        mtrace(get_string('cli_unmatcheditem', 'local_hlai_grading', (object)['slot' => $item->slot, 'id' => $item->id, 'name' => $item->name]));
+        $unmatcheddata = (object)['slot' => $item->slot, 'id' => $item->id, 'name' => $item->name];
+        mtrace(get_string('cli_unmatcheditem', 'local_hlai_grading', $unmatcheddata));
     }
 }
 
