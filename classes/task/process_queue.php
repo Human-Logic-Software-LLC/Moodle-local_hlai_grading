@@ -217,16 +217,13 @@ class process_queue extends scheduled_task {
                     }
                 }
 
-                if (!$ai) {
-                    if ($keytext === '') {
-                        throw new \Exception("Queue item {$item->id}: missing answer key for {$modulename} {$instanceid}");
-                    }
-
+                // Path 2: Key-match similarity when answer key is available.
+                if (!$ai && $keytext !== '') {
                     $analysis = similarity::analyze($keytext, $student);
                     if (empty($analysis['key_terms_count'])) {
                         throw new \Exception(
-                            "Queue item {$item->id}: answer key contains no usable terms" .
-                            " for {$modulename} {$instanceid}"
+                            "Queue item {$item->id}: answer key contains no usable terms"
+                            . " for {$modulename} {$instanceid}"
                         );
                     }
                     $providerlabel = $analysis['method'] ?? 'keymatch';
@@ -240,6 +237,39 @@ class process_queue extends scheduled_task {
                         'criteria' => [],
                         'raw' => ['similarity' => $analysis],
                     ];
+                }
+
+                // Path 3: AI gateway without rubric (open-ended grading).
+                if (!$ai) {
+                    $gatewaypayload = [
+                        'module' => $modulename,
+                        'instanceid' => $instanceid,
+                        'courseid' => $courseid,
+                        'question' => $question,
+                        'submission' => $student,
+                        'custom_instructions' => $custominstructions,
+                        'max_score' => $maxgrade,
+                    ];
+                    if ($keytext !== '') {
+                        $gatewaypayload['answer_key'] = $keytext;
+                    }
+                    $airesponse = $this->request_ai_grade($gatewaypayload, $qualitysetting);
+                    $providerlabel = $airesponse['provider'] ?? 'gateway';
+                    $normalized = $this->normalize_ai_response($airesponse['content'] ?? '');
+                    $score = (float)($normalized['score'] ?? 0);
+                    $maxscore = (float)($normalized['max_score'] ?? $maxgrade);
+                    if ($maxscore > 0 && $maxgrade > 0 && $maxscore != $maxgrade) {
+                        $score = ($score / $maxscore) * $maxgrade;
+                        $maxscore = $maxgrade;
+                    }
+                    $ai = [
+                        'score' => $score,
+                        'max_score' => $maxscore,
+                        'feedback' => (string)($normalized['feedback'] ?? ''),
+                        'criteria' => $normalized['criteria'] ?? [],
+                        'raw' => $normalized,
+                    ];
+                    $grademethod = 'ai';
                 }
 
                 // Store grading result in hlai_grading_results (draft storage).
@@ -287,6 +317,8 @@ class process_queue extends scheduled_task {
                     : null;
                 if ($grademethod === 'keymatch') {
                     $result->model = ($providerlabel === 'semantic') ? 'gateway:semantic' : 'local:overlap';
+                } else if ($grademethod === 'ai') {
+                    $result->model = 'gateway:ai';
                 } else {
                     $result->model = 'gateway:rubric';
                 }
