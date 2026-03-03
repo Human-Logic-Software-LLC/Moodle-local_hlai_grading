@@ -425,8 +425,13 @@ function xmldb_local_hlai_grading_upgrade($oldversion) {
             $itemtable->add_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null);
 
             $itemtable->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-            $itemtable->add_key('rubricfk', XMLDB_KEY_FOREIGN, ['rubricid'],
-                'local_hlai_grading_quiz_rubric', ['id']);
+            $itemtable->add_key(
+                'rubricfk',
+                XMLDB_KEY_FOREIGN,
+                ['rubricid'],
+                'local_hlai_grading_quiz_rubric',
+                ['id']
+            );
 
             $dbman->create_table($itemtable);
         }
